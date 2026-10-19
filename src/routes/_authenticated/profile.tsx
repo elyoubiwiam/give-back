@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { CAUSES, CITIES, SKILLS, TIME_SLOTS, type Cause, type City } from "@/lib/data";
 import { useProfile, type Profile } from "@/lib/profile";
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
       { title: "Your profile — GiveBack" },

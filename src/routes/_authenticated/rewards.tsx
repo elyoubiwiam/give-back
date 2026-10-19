@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { LEVELS, REWARDS, levelFor } from "@/lib/data";
 import { useProfile } from "@/lib/profile";
 
-export const Route = createFileRoute("/rewards")({
+export const Route = createFileRoute("/_authenticated/rewards")({
   head: () => ({
     meta: [
       { title: "Rewards — GiveBack" },

@@ -12,9 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as DonateRouteImport } from './routes/donate'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -31,19 +31,19 @@ const DonateRoute = DonateRouteImport.update({
   path: '/donate',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RewardsRoute = RewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/_authenticated/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
+  id: '/_authenticated/rewards',
+  path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -51,49 +51,49 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/community': typeof CommunityRoute
   '/donate': typeof DonateRoute
-  '/profile': typeof ProfileRoute
-  '/rewards': typeof RewardsRoute
   '/tasks': typeof TasksRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/rewards': typeof AuthenticatedRewardsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/community': typeof CommunityRoute
   '/donate': typeof DonateRoute
-  '/profile': typeof ProfileRoute
-  '/rewards': typeof RewardsRoute
   '/tasks': typeof TasksRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/rewards': typeof AuthenticatedRewardsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/community': typeof CommunityRoute
   '/donate': typeof DonateRoute
-  '/profile': typeof ProfileRoute
-  '/rewards': typeof RewardsRoute
   '/tasks': typeof TasksRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/community' | '/donate' | '/profile' | '/rewards' | '/tasks'
+  fullPaths: '/' | '/community' | '/donate' | '/tasks' | '/profile' | '/rewards'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/community' | '/donate' | '/profile' | '/rewards' | '/tasks'
+  to: '/' | '/community' | '/donate' | '/tasks' | '/profile' | '/rewards'
   id:
     | '__root__'
     | '/'
     | '/community'
     | '/donate'
-    | '/profile'
-    | '/rewards'
     | '/tasks'
+    | '/_authenticated/profile'
+    | '/_authenticated/rewards'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CommunityRoute: typeof CommunityRoute
   DonateRoute: typeof DonateRoute
-  ProfileRoute: typeof ProfileRoute
-  RewardsRoute: typeof RewardsRoute
   TasksRoute: typeof TasksRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -119,25 +119,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DonateRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rewards': {
-      id: '/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof RewardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/tasks': {
       id: '/tasks'
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/rewards': {
+      id: '/_authenticated/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof AuthenticatedRewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -147,9 +147,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CommunityRoute: CommunityRoute,
   DonateRoute: DonateRoute,
-  ProfileRoute: ProfileRoute,
-  RewardsRoute: RewardsRoute,
   TasksRoute: TasksRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

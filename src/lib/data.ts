@@ -1,5 +1,17 @@
+import type { LucideIcon } from "lucide-react";
+import { Leaf, Utensils, PawPrint, HeartHandshake, GraduationCap, Home, Stethoscope, Palette } from "lucide-react";
+
 export const CITIES = ["London", "Manchester", "Bristol", "Edinburgh", "Leeds", "Glasgow"] as const;
 export type City = (typeof CITIES)[number];
+
+export const CITY_CENTERS: Record<City, [number, number]> = {
+  London: [51.507, -0.1],
+  Manchester: [53.48, -2.235],
+  Bristol: [51.455, -2.59],
+  Edinburgh: [55.952, -3.19],
+  Leeds: [53.8, -1.549],
+  Glasgow: [55.864, -4.252],
+};
 
 export const CAUSES = [
   "Environment",
@@ -12,6 +24,19 @@ export const CAUSES = [
   "Arts & Culture",
 ] as const;
 export type Cause = (typeof CAUSES)[number];
+
+/** Each cause maps to a semantic colour token defined in styles.css. */
+export const CAUSE_META: Record<Cause, { color: string; icon: LucideIcon }> = {
+  Environment: { color: "var(--sage)", icon: Leaf },
+  "Food & Hunger": { color: "var(--mustard)", icon: Utensils },
+  Animals: { color: "var(--coral)", icon: PawPrint },
+  "Elderly Care": { color: "var(--plum)", icon: HeartHandshake },
+  "Youth & Education": { color: "var(--teal)", icon: GraduationCap },
+  Homelessness: { color: "var(--primary)", icon: Home },
+  Health: { color: "var(--coral)", icon: Stethoscope },
+  "Arts & Culture": { color: "var(--plum)", icon: Palette },
+};
+export const causeMeta = (c: string) => CAUSE_META[c as Cause] ?? CAUSE_META.Environment;
 
 export const SKILLS = [
   "Heavy lifting",
@@ -35,57 +60,35 @@ export type Task = {
   id: string;
   title: string;
   org: string;
-  city: City;
-  cause: Cause;
+  city: string;
+  cause: string;
   minutes: number;
   points: number;
-  when: string;
+  when_label: string;
   spots: number;
+  lat: number;
+  lng: number;
 };
 
-export const TASKS: Task[] = [
-  { id: "1", title: "Sort donated tins at the food bank", org: "Hackney Food Bank", city: "London", cause: "Food & Hunger", minutes: 60, points: 40, when: "Sat, 10:00", spots: 4 },
-  { id: "2", title: "Walk two senior dogs", org: "Battersea Friends", city: "London", cause: "Animals", minutes: 30, points: 20, when: "Today, 17:30", spots: 2 },
-  { id: "3", title: "Litter pick along the canal", org: "Canal Keepers", city: "London", cause: "Environment", minutes: 120, points: 70, when: "Sun, 09:00", spots: 12 },
-  { id: "4", title: "Tea & chat with a resident", org: "Age Together", city: "London", cause: "Elderly Care", minutes: 60, points: 45, when: "Wed, 15:00", spots: 3 },
-  { id: "5", title: "Carry chairs for a community fair", org: "Ancoats Hub", city: "Manchester", cause: "Arts & Culture", minutes: 120, points: 60, when: "Sat, 08:30", spots: 6 },
-  { id: "6", title: "Serve hot meals", org: "Mustard Tree", city: "Manchester", cause: "Homelessness", minutes: 240, points: 120, when: "Fri, 18:00", spots: 5 },
-  { id: "7", title: "Read with Year 3 pupils", org: "Reading Buddies", city: "Manchester", cause: "Youth & Education", minutes: 60, points: 45, when: "Thu, 14:00", spots: 2 },
-  { id: "8", title: "Plant bulbs in the community garden", org: "Bristol Green", city: "Bristol", cause: "Environment", minutes: 120, points: 65, when: "Sun, 11:00", spots: 8 },
-  { id: "9", title: "Drive meal deliveries", org: "Bristol Meals on Wheels", city: "Bristol", cause: "Elderly Care", minutes: 120, points: 80, when: "Tue, 11:30", spots: 1 },
-  { id: "10", title: "Pack hygiene kits", org: "Streetwise Edinburgh", city: "Edinburgh", cause: "Homelessness", minutes: 30, points: 25, when: "Today, 19:00", spots: 10 },
-  { id: "11", title: "Steward a charity 5k", org: "Leeds Heart Run", city: "Leeds", cause: "Health", minutes: 240, points: 110, when: "Sun, 07:30", spots: 15 },
-  { id: "12", title: "Clean cat enclosures", org: "Glasgow Cat Rescue", city: "Glasgow", cause: "Animals", minutes: 60, points: 40, when: "Sat, 13:00", spots: 3 },
-];
-
-export const RECENT_ACTIONS: { name: string; action: string; city: City; ago: string }[] = [
-  { name: "Amira", action: "sorted 120 tins at Hackney Food Bank", city: "London", ago: "12 min ago" },
-  { name: "Tom", action: "walked two rescue dogs", city: "London", ago: "40 min ago" },
-  { name: "Priya", action: "shared tea with a resident at Age Together", city: "London", ago: "2 h ago" },
-  { name: "Callum", action: "served 60 hot meals", city: "Manchester", ago: "1 h ago" },
-  { name: "Grace", action: "read with Year 3 pupils", city: "Manchester", ago: "3 h ago" },
-  { name: "Ben", action: "planted 300 bulbs", city: "Bristol", ago: "25 min ago" },
-  { name: "Isla", action: "packed 40 hygiene kits", city: "Edinburgh", ago: "1 h ago" },
-  { name: "Sam", action: "stewarded the Leeds Heart Run", city: "Leeds", ago: "5 h ago" },
-  { name: "Ewan", action: "cleaned cat enclosures", city: "Glasgow", ago: "2 h ago" },
-];
-
-export const CITY_STATS: { city: City; hours: number; actions: number; volunteers: number }[] = [
-  { city: "Manchester", hours: 4820, actions: 1630, volunteers: 712 },
-  { city: "London", hours: 4510, actions: 1890, volunteers: 1204 },
-  { city: "Bristol", hours: 3120, actions: 980, volunteers: 401 },
-  { city: "Edinburgh", hours: 2760, actions: 845, volunteers: 366 },
-  { city: "Leeds", hours: 2210, actions: 702, volunteers: 298 },
-  { city: "Glasgow", hours: 1980, actions: 655, volunteers: 274 },
+export const RECENT_ACTIONS: { name: string; action: string; city: City; ago: string; cause: Cause }[] = [
+  { name: "Amira", action: "sorted 120 tins at Hackney Food Bank", city: "London", ago: "12 min ago", cause: "Food & Hunger" },
+  { name: "Tom", action: "walked two rescue dogs", city: "London", ago: "40 min ago", cause: "Animals" },
+  { name: "Priya", action: "shared tea with a resident at Age Together", city: "London", ago: "2 h ago", cause: "Elderly Care" },
+  { name: "Callum", action: "served 60 hot meals", city: "Manchester", ago: "1 h ago", cause: "Homelessness" },
+  { name: "Grace", action: "read with Year 3 pupils", city: "Manchester", ago: "3 h ago", cause: "Youth & Education" },
+  { name: "Ben", action: "planted 300 bulbs", city: "Bristol", ago: "25 min ago", cause: "Environment" },
+  { name: "Isla", action: "packed 40 hygiene kits", city: "Edinburgh", ago: "1 h ago", cause: "Homelessness" },
+  { name: "Sam", action: "stewarded the Leeds Heart Run", city: "Leeds", ago: "5 h ago", cause: "Health" },
+  { name: "Ewan", action: "cleaned cat enclosures", city: "Glasgow", ago: "2 h ago", cause: "Animals" },
 ];
 
 export const REWARDS = [
-  { id: "r1", partner: "Ozone Coffee", offer: "Free flat white", cost: 100, kind: "Coffee" },
-  { id: "r2", partner: "Gail's Bakery", offer: "20% off pastries", cost: 80, kind: "Food" },
-  { id: "r3", partner: "Waterstones", offer: "£5 off any book", cost: 150, kind: "Shop" },
-  { id: "r4", partner: "Picturehouse", offer: "2-for-1 cinema tickets", cost: 220, kind: "Events" },
-  { id: "r5", partner: "Oxfam Shops", offer: "15% off pre-loved", cost: 60, kind: "Shop" },
-  { id: "r6", partner: "Local gig night", offer: "Free entry", cost: 300, kind: "Events" },
+  { id: "r1", partner: "Ozone Coffee", offer: "Free flat white", cost: 100, kind: "Coffee", color: "var(--mustard)" },
+  { id: "r2", partner: "Gail's Bakery", offer: "20% off pastries", cost: 80, kind: "Food", color: "var(--coral)" },
+  { id: "r3", partner: "Waterstones", offer: "£5 off any book", cost: 150, kind: "Shop", color: "var(--teal)" },
+  { id: "r4", partner: "Picturehouse", offer: "2-for-1 cinema tickets", cost: 220, kind: "Events", color: "var(--plum)" },
+  { id: "r5", partner: "Oxfam Shops", offer: "15% off pre-loved", cost: 60, kind: "Shop", color: "var(--sage)" },
+  { id: "r6", partner: "Local gig night", offer: "Free entry", cost: 300, kind: "Events", color: "var(--primary)" },
 ];
 
 export const LEVELS = [
@@ -94,16 +97,14 @@ export const LEVELS = [
   { name: "Neighbour", min: 300 },
   { name: "Champion", min: 700 },
   { name: "Local Hero", min: 1500 },
-];
+] as const;
 
 export function levelFor(points: number) {
-  let current: (typeof LEVELS)[number] = LEVELS[0]!;
-  let next: (typeof LEVELS)[number] | undefined;
-  for (let i = 0; i < LEVELS.length; i++) {
-    if (points >= LEVELS[i]!.min) {
-      current = LEVELS[i]!;
-      next = LEVELS[i + 1];
-    }
-  }
-  return { current, next };
+  let idx = 0;
+  LEVELS.forEach((l, i) => {
+    if (points >= l.min) idx = i;
+  });
+  return { current: LEVELS[idx]!, next: LEVELS[idx + 1] };
 }
+
+export const formatMinutes = (m: number) => (m < 60 ? `${m} min` : `${m / 60} h`);
