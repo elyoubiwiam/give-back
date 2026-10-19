@@ -7,6 +7,8 @@
 - "Choose all" button beside the causes heading on the profile.
 - Clearer help-option labels, each showing a one-line description when picked.
 - Every cause now has its own colour (Health = blue, Arts & Culture = violet); checked on profile, tasks and cities pages.
+- Limit free welcome rewards to 150 points or less and unify eligible CTAs; eligibility tests and signed-in page verified.
+- Show a fading booking confirmation with task details and calendar links after joining; real booking and calendar download verified.
 
 ## Open
 - (none)

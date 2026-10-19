@@ -8,6 +8,8 @@ import { causeMeta, formatMinutes, formatTaskWhen, rewardEquivalent, type Task }
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyTaskJoined } from "@/lib/notify.functions";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export function useJoinTask() {
   const { user, refresh, joined } = useAuth();
@@ -24,11 +26,7 @@ export function useJoinTask() {
       return false;
     }
     notifyTaskJoined({ data: { taskId: task.id } }).catch((e) => console.error(e));
-    toast.success(`+${task.points} points!`, {
-      description: `You're in for "${task.title}".`,
-      action: { label: "Add to calendar", onClick: () => window.open(googleCalendarUrl(task), "_blank") },
-    });
-    if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first task earns you a welcome reward — pick it in Rewards." });
+    if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first action earns a welcome gift — choose a reward worth 150 points or less in Rewards." });
     await refresh();
     qc.invalidateQueries({ queryKey: ["city-stats"] });
     return true;
@@ -39,12 +37,15 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
   const { joined } = useAuth();
   const join = useJoinTask();
   const [pop, setPop] = useState(false);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [joining, setJoining] = useState(false);
   const meta = causeMeta(task.cause);
   const Icon = meta.icon;
   const isJoined = joined.has(task.id);
   const spotsPct = Math.max(10, 100 - task.spots * 7);
 
   return (
+    <>
     <article
       className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:rotate-[-0.4deg] hover:shadow-[var(--shadow-soft)] ${compact ? "" : ""}`}
     >
@@ -81,22 +82,46 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           </div>
         )}
         <div className="mt-auto pt-5">
-          <button
-            disabled={isJoined}
+          <Button
+            disabled={isJoined || joining}
             onClick={async () => {
-              if (await join(task)) {
-                setPop(true);
-                setTimeout(() => setPop(false), 1000);
+              setJoining(true);
+              try {
+                if (await join(task)) {
+                  setConfirmationOpen(true);
+                  setPop(true);
+                  setTimeout(() => setPop(false), 1000);
+                }
+              } finally {
+                setJoining(false);
               }
             }}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:scale-[1.02] hover:opacity-95 active:scale-95 disabled:bg-secondary disabled:text-secondary-foreground"
           >
-            {isJoined ? (<><Check className="h-4 w-4" /> Joined</>) : "Lend a hand"}
-          </button>
+            {isJoined ? (<><Check className="h-4 w-4" /> Joined</>) : joining ? "Booking…" : "Lend a hand"}
+          </Button>
           {isJoined && <CalendarLinks task={task} />}
         </div>
       </div>
     </article>
+    <Dialog open={confirmationOpen} onOpenChange={setConfirmationOpen}>
+      <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-lg bg-card duration-300 data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-100 motion-reduce:animate-none">
+        <DialogHeader>
+          <span className="mb-3 flex items-center gap-2 text-sm font-semibold text-primary"><Check className="h-5 w-5" /> Booking confirmed</span>
+          <DialogTitle className="pr-6 text-2xl leading-snug">{task.title}</DialogTitle>
+          <DialogDescription>{task.org} · {task.cause}</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3 border-y border-border py-4 text-sm text-foreground">
+          <p className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-primary" />{formatTaskWhen(task)} · UK time</p>
+          <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" />{task.org}, {task.city}</p>
+          <p className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" />{formatMinutes(task.minutes)}</p>
+          <p className="flex items-center gap-2 font-semibold"><Sparkles className="h-4 w-4 text-primary" />+{task.points} points</p>
+        </div>
+        <CalendarLinks task={task} />
+        <Button onClick={() => setConfirmationOpen(false)} className="mt-2">Done</Button>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
 
@@ -107,7 +132,7 @@ function CalendarLinks({ task }: { task: Task }) {
       <CalendarPlus className="h-3.5 w-3.5" /> Add to:
       <a className={cls} href={googleCalendarUrl(task)} target="_blank" rel="noreferrer">Google</a>
       <a className={cls} href={outlookCalendarUrl(task)} target="_blank" rel="noreferrer">Outlook</a>
-      <button className={cls} onClick={() => downloadIcs(task)}>Apple / other</button>
+      <Button variant="outline" size="sm" className={cls} onClick={() => downloadIcs(task)}>Apple / other</Button>
     </div>
   );
 }
