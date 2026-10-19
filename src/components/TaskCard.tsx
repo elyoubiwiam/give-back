@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
 export function useJoinTask() {
-  const { user, refresh } = useAuth();
+  const { user, refresh, joined } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
   return async (task: Task) => {
@@ -22,6 +22,7 @@ export function useJoinTask() {
       return false;
     }
     toast.success(`+${task.points} points!`, { description: `You're in for "${task.title}".` });
+    if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first task earns you a welcome reward — pick it in Rewards." });
     await refresh();
     qc.invalidateQueries({ queryKey: ["city-stats"] });
     return true;
