@@ -41,7 +41,7 @@ const TaskJoined = ({ name, title = 'your task', org, city, when, duration, poin
 
 export const template = {
   component: TaskJoined,
-  subject: (d: Record<string, any>) => `You're in: ${d.title ?? 'your GiveBack task'}`,
+  subject: (d: Record<string, any>) => `You're in: ${d['title'] ?? 'your GiveBack task'}`,
   displayName: 'Task joined',
   previewData: { name: 'Wiam', title: 'Sort donations at the food bank', org: 'Hackney Food Bank', city: 'London', when: 'Sat 10am', duration: '1h', points: 60, googleUrl: 'https://calendar.google.com', outlookUrl: 'https://outlook.live.com' },
 } satisfies TemplateEntry
