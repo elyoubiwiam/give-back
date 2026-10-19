@@ -34,14 +34,14 @@ export function UKMap({
   const counts = Object.fromEntries(CITIES.map((c) => [c, tasks.filter((t) => t.city === c).length]));
   return (
     <div className={`rounded-3xl bg-teal/15 p-4 ${className}`}>
-      <svg viewBox="0 0 360 560" className="h-full w-full" role="img" aria-label="Map of UK cities with volunteering tasks">
+      <svg viewBox="0 0 360 580" className="h-full w-full" role="img" aria-label="Map of UK cities with volunteering tasks">
         <path d={GB_PATH} fill="var(--card)" stroke="var(--border)" strokeWidth={2} strokeLinejoin="round" />
         <path d={NI_PATH} fill="var(--card)" stroke="var(--border)" strokeWidth={2} strokeLinejoin="round" />
         {CITIES.map((c) => {
           const [x, y] = project([CITY_CENTERS[c][1], CITY_CENTERS[c][0]]);
           const r = 8 + Math.min(10, (counts[c] ?? 0) * 2);
           const on = c === selected;
-          const labelLeft = c === "Glasgow";
+          const pos = c === "Glasgow" || c === "Manchester" ? "left" : c === "London" ? "below" : "right";
           return (
             <g key={c} onClick={() => onSelect(c)} className="cursor-pointer" role="button" aria-label={`${c}, ${counts[c]} tasks`}>
               <circle cx={x} cy={y} r={r} fill={on ? "var(--primary)" : "var(--coral)"} opacity={0.25}>
@@ -49,9 +49,9 @@ export function UKMap({
               </circle>
               <circle cx={x} cy={y} r={r * 0.6} fill={on ? "var(--primary)" : "var(--coral)"} stroke="var(--card)" strokeWidth={3} className="transition-all" />
               <text
-                x={labelLeft ? x - r - 4 : x + r + 4}
-                y={y + 4}
-                textAnchor={labelLeft ? "end" : "start"}
+                x={pos === "left" ? x - r - 4 : pos === "below" ? x : x + r + 4}
+                y={pos === "below" ? y + r + 16 : y + 4}
+                textAnchor={pos === "left" ? "end" : pos === "below" ? "middle" : "start"}
                 fontSize={on ? 15 : 13}
                 fontWeight={on ? 700 : 500}
                 fill="var(--foreground)"
