@@ -8,3 +8,6 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep welcome-reward eligibility in a shared, tested rule so all reward buttons apply the same limit.
+- Render booking confirmation in TaskCard with the shared Dialog and calendar helpers so all task listings share the same confirmation flow.

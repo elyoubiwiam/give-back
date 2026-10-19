@@ -4,6 +4,8 @@ import { Gift } from "lucide-react";
 import { LEVELS, REWARDS, levelFor } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { CountUp, Reveal } from "@/lib/motion";
+import { Button } from "@/components/ui/button";
+import { canRedeemWelcomeReward } from "@/lib/reward-rules";
 
 export const Route = createFileRoute("/_authenticated/rewards")({
   head: () => ({
@@ -12,6 +14,8 @@ export const Route = createFileRoute("/_authenticated/rewards")({
       { name: "description", content: "Turn your volunteering points into discounts at partner cafés, shops and events." },
       { property: "og:title", content: "Rewards — GiveBack" },
       { property: "og:description", content: "Points for good deeds, treats from local partners." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: RewardsPage,
@@ -49,7 +53,7 @@ function RewardsPage() {
         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-mustard text-primary-foreground"><Gift className="h-5 w-5" /></span>
         <div>
           <p className="font-semibold text-foreground">{freeReward ? "Welcome gift unlocked: pick 1 reward for free" : "Your first task unlocks 1 free reward"}</p>
-          <p className="text-sm text-muted-foreground">{freeReward ? "Thanks for your first good deed — choose any partner reward below, no points needed." : "Join any task and you'll get one partner reward on us, whatever its points."}</p>
+          <p className="text-sm text-muted-foreground">{freeReward ? "This welcome gift celebrates your first action on GiveBack — choose 1 reward worth 150 points or less, no points needed." : "Your first action on GiveBack unlocks 1 free partner reward worth 150 points or less."}</p>
         </div>
       </div>
 
@@ -64,13 +68,13 @@ function RewardsPage() {
               <h3 className="mt-1 text-xl font-semibold text-foreground">{r.offer}</h3>
               <div className="mt-auto flex items-center justify-between pt-6">
                 <span className="font-semibold text-primary">{r.cost} pts</span>
-                <button
-                  disabled={!freeReward && pts < r.cost}
+                <Button
+                  disabled={!canRedeemWelcomeReward(freeReward, r.cost) && pts < r.cost}
                   onClick={() => toast("Vouchers launch soon", { description: "We're finalising partner codes." })}
                   className="rounded-full bg-foreground px-4 py-2 text-sm text-background transition active:scale-95 disabled:opacity-30"
                 >
-                  {freeReward && pts < r.cost ? "Redeem free" : "Redeem"}
-                </button>
+                  {canRedeemWelcomeReward(freeReward, r.cost) ? "Redeem free" : "Redeem"}
+                </Button>
               </div>
             </div>
           </Reveal>
