@@ -33,8 +33,8 @@ export const CAUSE_META: Record<Cause, { color: string; icon: LucideIcon }> = {
   "Elderly Care": { color: "var(--plum)", icon: HeartHandshake },
   "Youth & Education": { color: "var(--teal)", icon: GraduationCap },
   Homelessness: { color: "var(--primary)", icon: Home },
-  Health: { color: "var(--coral)", icon: Stethoscope },
-  "Arts & Culture": { color: "var(--plum)", icon: Palette },
+  Health: { color: "var(--sky)", icon: Stethoscope },
+  "Arts & Culture": { color: "var(--grape)", icon: Palette },
 };
 export const causeMeta = (c: string) => CAUSE_META[c as Cause] ?? CAUSE_META.Environment;
 
