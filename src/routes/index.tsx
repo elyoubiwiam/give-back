@@ -2,10 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { CITIES, CITY_CENTERS, RECENT_ACTIONS, causeMeta, type City } from "@/lib/data";
+import { CITIES, RECENT_ACTIONS, causeMeta, type City } from "@/lib/data";
 import { cityStatsQuery, tasksQuery } from "@/lib/queries";
-import { TaskCard, useJoinTask } from "@/components/TaskCard";
-import { LazyMap } from "@/components/LazyMap";
+import { TaskCard } from "@/components/TaskCard";
+import { UKMap } from "@/components/UKMap";
+import { JoinCTA } from "@/components/JoinCTA";
 import { CountUp, Reveal } from "@/lib/motion";
 import { useAuth } from "@/lib/auth";
 
@@ -22,14 +23,13 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [city, setCity] = useState<City>("London");
   useEffect(() => {
     if (profile?.city) setCity(profile.city as City);
   }, [profile?.city]);
   const { data: tasks = [] } = useQuery(tasksQuery);
   const { data: stats = [] } = useQuery(cityStatsQuery);
-  const join = useJoinTask();
   const s = stats.find((x) => x.city === city);
   const cityTasks = tasks.filter((t) => t.city === city);
   const actions = RECENT_ACTIONS.filter((a) => a.city === city);
@@ -54,9 +54,17 @@ function Index() {
               <button key={c} onClick={() => setCity(c)} className={`rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-95 ${city === c ? "bg-foreground text-background" : "bg-card text-foreground hover:bg-secondary"}`}>{c}</button>
             ))}
           </div>
-          <Link to="/tasks" className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:scale-105">
-            Find a task <ArrowRight className="h-4 w-4" />
-          </Link>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {!user && (
+              <Link to="/auth" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:scale-105">
+                Create your free account <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+            <Link to="/tasks" className={`inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium transition hover:scale-105 ${user ? "bg-primary text-primary-foreground" : "bg-card text-foreground border border-border"}`}>
+              Find a task {user && <ArrowRight className="h-4 w-4" />}
+            </Link>
+          </div>
+          {!user && <p className="mt-3 text-sm text-muted-foreground">Free account = tasks tailored to the causes you care about.</p>}
         </div>
       </section>
 
@@ -80,11 +88,11 @@ function Index() {
       <section className="mx-auto grid max-w-6xl gap-8 px-5 py-16 lg:grid-cols-[1.4fr_1fr]">
         <Reveal>
           <div className="flex items-end justify-between">
-            <h2 className="text-2xl font-bold text-foreground">Happening in {city}</h2>
+            <h2 className="text-2xl font-bold text-foreground">Tap a city</h2>
             <Link to="/map" className="text-sm font-medium text-primary">Full map →</Link>
           </div>
           <div className="mt-4">
-            <LazyMap tasks={cityTasks} center={CITY_CENTERS[city]} zoom={12} height={380} onJoin={(t) => void join(t)} />
+            <UKMap tasks={tasks} selected={city} onSelect={setCity} className="mx-auto max-w-sm" />
           </div>
         </Reveal>
         <Reveal delay={150}>
@@ -115,6 +123,10 @@ function Index() {
             <Reveal key={t.id} delay={i * 100}><TaskCard task={t} /></Reveal>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 pb-10">
+        <JoinCTA />
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pb-20">

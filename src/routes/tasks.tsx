@@ -6,6 +6,7 @@ import { tasksQuery } from "@/lib/queries";
 import { useAuth } from "@/lib/auth";
 import { TaskCard } from "@/components/TaskCard";
 import { Reveal } from "@/lib/motion";
+import { JoinCTA } from "@/components/JoinCTA";
 
 export const Route = createFileRoute("/tasks")({
   head: () => ({
@@ -60,10 +61,12 @@ function TasksPage() {
       <h1 className="text-4xl font-bold text-foreground md:text-5xl">Find a task</h1>
       {hasPrefs ? (
         <p className="mt-2 text-muted-foreground">Tailored to your causes and the time you said you can give.</p>
-      ) : (
+      ) : profile ? (
         <p className="mt-2 text-muted-foreground">
-          <Link to="/profile" className="text-primary underline underline-offset-4">Set up your profile</Link> to see tasks matched to you.
+          <Link to="/profile" className="text-primary underline underline-offset-4">Finish your profile</Link> to see tasks matched to you.
         </p>
+      ) : (
+        <div className="mt-6"><JoinCTA compact title="See only the tasks that fit you — create a free account" /></div>
       )}
 
       <div className="mt-8 space-y-4 rounded-3xl border border-border bg-card p-5">
