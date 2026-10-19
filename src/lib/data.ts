@@ -97,11 +97,11 @@ export const LEVELS = [
 ];
 
 export function levelFor(points: number) {
-  let current = LEVELS[0];
+  let current: (typeof LEVELS)[number] = LEVELS[0]!;
   let next: (typeof LEVELS)[number] | undefined;
   for (let i = 0; i < LEVELS.length; i++) {
-    if (points >= LEVELS[i].min) {
-      current = LEVELS[i];
+    if (points >= LEVELS[i]!.min) {
+      current = LEVELS[i]!;
       next = LEVELS[i + 1];
     }
   }

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/community")({
 
 function CommunityPage() {
   const sorted = [...CITY_STATS].sort((a, b) => b.hours - a.hours);
-  const max = sorted[0].hours;
+  const max = sorted[0]?.hours ?? 1;
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="font-display text-4xl text-foreground md:text-5xl">How cities are giving back</h1>

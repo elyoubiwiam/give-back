@@ -30,8 +30,8 @@ function ProfilePage() {
     `rounded-full border px-3.5 py-1.5 text-sm transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card hover:border-primary/50"}`;
 
   const submit = () => {
-    if (!draft.name.trim()) return toast.error("Please add your name");
-    if (!draft.causes.length) return toast.error("Pick at least one cause");
+    if (!draft.name.trim()) { toast.error("Please add your name"); return; }
+    if (!draft.causes.length) { toast.error("Pick at least one cause"); return; }
     save(draft);
     toast.success("Profile saved on this device");
     navigate({ to: "/tasks" });
