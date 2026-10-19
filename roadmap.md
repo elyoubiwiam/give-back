@@ -6,6 +6,7 @@
 - Show exact task dates (day, month and time) on task cards, the map list and the home page.
 - "Choose all" button beside the causes heading on the profile.
 - Clearer help-option labels, each showing a one-line description when picked.
+- Every cause now has its own colour (Health = blue, Arts & Culture = violet); checked on profile, tasks and cities pages.
 
 ## Open
-- Give every cause its own colour: Health currently repeats Animals' colour and Arts & Culture repeats Elderly Care's. Update it everywhere the colour shows.
+- (none)
