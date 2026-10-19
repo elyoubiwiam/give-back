@@ -25,7 +25,7 @@ function DonatePage() {
 
   return (
     <div className="mx-auto max-w-xl px-5 py-12">
-      <h1 className="font-display text-4xl text-foreground md:text-5xl">No time? Give a little.</h1>
+      <h1 className="font-bold text-4xl text-foreground md:text-5xl">No time? Give a little.</h1>
       <p className="mt-2 text-muted-foreground">100% goes to the charity you pick.</p>
 
       <div className="mt-8 space-y-6 rounded-3xl border border-border bg-card p-6">
