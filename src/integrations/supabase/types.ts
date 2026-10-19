@@ -14,13 +14,149 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      city_baseline: {
+        Row: {
+          actions: number
+          city: string
+          hours: number
+          volunteers: number
+        }
+        Insert: {
+          actions: number
+          city: string
+          hours: number
+          volunteers: number
+        }
+        Update: {
+          actions?: number
+          city?: string
+          hours?: number
+          volunteers?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          causes: string[]
+          city: string
+          created_at: string
+          id: string
+          max_minutes: number
+          name: string
+          onboarded: boolean
+          points: number
+          skills: string[]
+        }
+        Insert: {
+          causes?: string[]
+          city?: string
+          created_at?: string
+          id: string
+          max_minutes?: number
+          name?: string
+          onboarded?: boolean
+          points?: number
+          skills?: string[]
+        }
+        Update: {
+          causes?: string[]
+          city?: string
+          created_at?: string
+          id?: string
+          max_minutes?: number
+          name?: string
+          onboarded?: boolean
+          points?: number
+          skills?: string[]
+        }
+        Relationships: []
+      }
+      task_signups: {
+        Row: {
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_signups_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tasks: {
+        Row: {
+          cause: string
+          city: string
+          id: string
+          lat: number
+          lng: number
+          minutes: number
+          org: string
+          points: number
+          spots: number
+          title: string
+          when_label: string
+        }
+        Insert: {
+          cause: string
+          city: string
+          id?: string
+          lat: number
+          lng: number
+          minutes: number
+          org: string
+          points: number
+          spots: number
+          title: string
+          when_label: string
+        }
+        Update: {
+          cause?: string
+          city?: string
+          id?: string
+          lat?: number
+          lng?: number
+          minutes?: number
+          org?: string
+          points?: number
+          spots?: number
+          title?: string
+          when_label?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      city_stats: {
+        Args: never
+        Returns: {
+          actions: number
+          city: string
+          hours: number
+          volunteers: number
+        }[]
+      }
+      join_task: { Args: { _task_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
