@@ -39,6 +39,10 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
   const [pop, setPop] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [joining, setJoining] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const { refresh } = useAuth();
+  const qc = useQueryClient();
   const meta = causeMeta(task.cause);
   const Icon = meta.icon;
   const isJoined = joined.has(task.id);
@@ -100,7 +104,7 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           >
             {isJoined ? (<><Check className="h-4 w-4" /> Joined</>) : joining ? "Booking…" : "Lend a hand"}
           </Button>
-          {isJoined && <CalendarLinks task={task} />}
+          {isJoined && <><CalendarLinks task={task} /><Button variant="ghost" className="mt-2 w-full text-muted-foreground" onClick={() => setCancelOpen(true)}>Cancel task</Button></>}
         </div>
       </div>
     </article>
@@ -119,6 +123,28 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
         </div>
         <CalendarLinks task={task} />
         <Button onClick={() => setConfirmationOpen(false)} className="mt-2">Done</Button>
+      </DialogContent>
+    </Dialog>
+    <Dialog open={cancelOpen} onOpenChange={(open) => { if (!cancelling) setCancelOpen(open); }}>
+      <DialogContent className="w-[calc(100%-2rem)] rounded-lg bg-card duration-300 motion-reduce:animate-none">
+        <DialogHeader>
+          <DialogTitle className="pr-6 text-xl leading-snug">Cancel this task?</DialogTitle>
+          <DialogDescription>{task.title} · {formatTaskWhen(task)}. Cancelling removes the {task.points} points from this booking. If you added it to your calendar, remove it there too.</DialogDescription>
+        </DialogHeader>
+        <div className="flex flex-wrap justify-end gap-3">
+          <Button variant="outline" disabled={cancelling} onClick={() => setCancelOpen(false)}>Keep booking</Button>
+          <Button disabled={cancelling} onClick={async () => {
+            setCancelling(true);
+            try {
+              const { error } = await supabase.rpc("cancel_task", { _task_id: task.id });
+              if (error) { toast.error(error.message); return; }
+              await refresh();
+              await qc.invalidateQueries({ queryKey: ["city-stats"] });
+              setCancelOpen(false);
+              toast.success("Task cancelled");
+            } finally { setCancelling(false); }
+          }}>{cancelling ? "Cancelling…" : "Cancel booking"}</Button>
+        </div>
       </DialogContent>
     </Dialog>
     </>

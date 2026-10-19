@@ -11,3 +11,5 @@
 
 - Keep welcome-reward eligibility in a shared, tested rule so all reward buttons apply the same limit.
 - Render booking confirmation in TaskCard with the shared Dialog and calendar helpers so all task listings share the same confirmation flow.
+- Cancel bookings through an authenticated, owner-scoped atomic database function that reverses booking points; never delete signups directly from the browser.
+- Build the profile booking summary from the shared tasks query and current user's joined IDs, reusing TaskCard for consistent calendar and cancellation controls.

@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { CAUSES, CITIES, SKILLS, TIME_SLOTS, causeMeta } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { Check } from "lucide-react";
+import { Suspense } from "react";
+import { ProfileTasks } from "@/components/ProfileTasks";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -14,6 +16,8 @@ export const Route = createFileRoute("/_authenticated/profile")({
       { name: "description", content: "Tell us the causes you care about, how you can help and how much time you have." },
       { property: "og:title", content: "Your profile — GiveBack" },
       { property: "og:description", content: "Set your causes, skills and time to get matched to tasks." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ProfilePage,
@@ -63,6 +67,8 @@ function ProfilePage() {
     <div className="mx-auto max-w-2xl px-5 py-12">
       <h1 className="text-4xl font-bold text-foreground md:text-5xl">{profile?.onboarded ? "Your profile" : "Welcome! Let's set you up"}</h1>
       <p className="mt-2 text-muted-foreground">We'll use this to match you with tasks that fit your causes and your time.</p>
+
+      <Suspense fallback={<p className="mt-8 text-sm text-muted-foreground">Loading your tasks…</p>}><ProfileTasks /></Suspense>
 
       <div className="mt-10 space-y-10">
         <section>

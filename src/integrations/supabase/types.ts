@@ -153,6 +153,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cancel_task: { Args: { _task_id: string }; Returns: number }
       city_stats: {
         Args: never
         Returns: {
