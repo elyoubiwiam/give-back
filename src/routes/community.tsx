@@ -1,50 +1,117 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CITY_STATS, RECENT_ACTIONS } from "@/lib/data";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { Crown } from "lucide-react";
+import { RECENT_ACTIONS, causeMeta } from "@/lib/data";
+import { cityStatsQuery, tasksQuery } from "@/lib/queries";
+import { CountUp, Reveal } from "@/lib/motion";
 
 export const Route = createFileRoute("/community")({
   head: () => ({
     meta: [
-      { title: "Community impact by city — GiveBack" },
-      { name: "description", content: "See how people across UK cities are giving back to their communities, with the latest good deeds." },
-      { property: "og:title", content: "Community impact by city — GiveBack" },
+      { title: "City ranking — GiveBack" },
+      { name: "description", content: "See which UK cities are giving back the most, with the latest good deeds from each community." },
+      { property: "og:title", content: "City ranking — GiveBack" },
       { property: "og:description", content: "How UK cities are giving back this month." },
     ],
   }),
   component: CommunityPage,
 });
 
+const METRICS = [
+  { id: "hours", label: "Hours given" },
+  { id: "actions", label: "Good deeds" },
+  { id: "volunteers", label: "Neighbours" },
+] as const;
+type Metric = (typeof METRICS)[number]["id"];
+const PODIUM_COLORS = ["var(--mustard)", "var(--teal)", "var(--coral)"];
+
 function CommunityPage() {
-  const sorted = [...CITY_STATS].sort((a, b) => b.hours - a.hours);
-  const max = sorted[0]?.hours ?? 1;
+  const { data: stats = [] } = useQuery(cityStatsQuery);
+  const { data: tasks = [] } = useQuery(tasksQuery);
+  const [metric, setMetric] = useState<Metric>("hours");
+  const sorted = useMemo(() => [...stats].sort((a, b) => b[metric] - a[metric]), [stats, metric]);
+  const max = sorted[0]?.[metric] ?? 1;
+  const podium = [sorted[1], sorted[0], sorted[2]];
+
+  const topCauses = (city: string) => {
+    const counts: Record<string, number> = {};
+    tasks.filter((t) => t.city === city).forEach((t) => (counts[t.cause] = (counts[t.cause] ?? 0) + 1));
+    return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([c]) => c);
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
-      <h1 className="font-display text-4xl text-foreground md:text-5xl">How cities are giving back</h1>
-      <p className="mt-2 max-w-xl text-muted-foreground">No leaderboards of people — just neighbourhoods showing up for each other. Hours given this month.</p>
+      <h1 className="text-4xl font-bold text-foreground md:text-5xl">How cities are giving back</h1>
+      <p className="mt-2 max-w-xl text-muted-foreground">No leaderboards of people — just communities showing up for each other this month.</p>
 
-      <div className="mt-10 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
-        <ol className="space-y-4">
+      <div className="mt-6 inline-flex rounded-full bg-secondary p-1">
+        {METRICS.map((m) => (
+          <button key={m.id} onClick={() => setMetric(m.id)} className={`rounded-full px-4 py-2 text-sm font-medium transition ${metric === m.id ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>{m.label}</button>
+        ))}
+      </div>
+
+      {sorted.length >= 3 && (
+        <div className="mt-10 grid grid-cols-3 items-end gap-3 md:gap-6">
+          {podium.map((c, i) => {
+            if (!c) return null;
+            const rank = i === 1 ? 1 : i === 0 ? 2 : 3;
+            const h = rank === 1 ? "h-52" : rank === 2 ? "h-40" : "h-32";
+            return (
+              <Reveal key={c.city} delay={rank * 120}>
+                <div className="text-center">
+                  {rank === 1 && <Crown className="mx-auto mb-2 h-7 w-7 animate-bounce text-mustard" />}
+                  <p className="text-lg font-bold text-foreground md:text-2xl">{c.city}</p>
+                  <p className="text-sm text-muted-foreground"><CountUp value={c[metric]} /></p>
+                  <div className={`mt-3 ${h} grid place-items-center rounded-t-3xl text-4xl font-bold text-primary-foreground transition-all`} style={{ background: PODIUM_COLORS[rank - 1] }}>
+                    {rank}
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="mt-12 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+        <div className="space-y-4">
           {sorted.map((s, i) => (
-            <li key={s.city} className="rounded-2xl border border-border bg-card p-5">
-              <div className="flex items-baseline justify-between">
-                <h2 className="font-display text-xl text-foreground"><span className="mr-3 text-muted-foreground">{i + 1}</span>{s.city}</h2>
-                <span className="font-display text-xl text-primary">{s.hours.toLocaleString()} h</span>
+            <Reveal key={s.city} delay={i * 60}>
+              <div className="rounded-3xl border border-border bg-card p-5 transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-soft)]">
+                <div className="flex items-baseline justify-between">
+                  <h2 className="text-lg font-semibold text-foreground"><span className="mr-3 text-muted-foreground">#{i + 1}</span>{s.city}</h2>
+                  <span className="text-lg font-bold text-primary">{s[metric].toLocaleString()}</span>
+                </div>
+                <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-secondary">
+                  <div className="h-full rounded-full bg-primary transition-all duration-700" style={{ width: `${(s[metric] / max) * 100}%` }} />
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {topCauses(s.city).map((c) => {
+                    const m = causeMeta(c);
+                    return <span key={c} className="rounded-full px-2.5 py-0.5 text-xs font-medium" style={{ background: `color-mix(in oklab, ${m.color} 18%, transparent)`, color: m.color }}>{c}</span>;
+                  })}
+                </div>
               </div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-secondary">
-                <div className="h-full rounded-full bg-primary" style={{ width: `${(s.hours / max) * 100}%` }} />
-              </div>
-              <p className="mt-3 text-xs text-muted-foreground">{s.actions.toLocaleString()} good deeds · {s.volunteers.toLocaleString()} neighbours</p>
-            </li>
+            </Reveal>
           ))}
-        </ol>
+        </div>
         <div>
-          <h2 className="font-display text-2xl text-foreground">Latest actions</h2>
+          <h2 className="text-2xl font-bold text-foreground">Latest actions</h2>
           <ul className="mt-4 space-y-3">
-            {RECENT_ACTIONS.map((a, i) => (
-              <li key={i} className="rounded-2xl bg-secondary/70 p-4 text-sm">
-                <p className="text-foreground"><strong>{a.name}</strong> {a.action}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{a.city} · {a.ago}</p>
-              </li>
-            ))}
+            {RECENT_ACTIONS.map((a, i) => {
+              const m = causeMeta(a.cause);
+              return (
+                <Reveal key={i} delay={i * 50}>
+                  <li className="flex gap-3 rounded-2xl bg-card p-4 text-sm">
+                    <span className="mt-1 h-3 w-3 shrink-0 rounded-full" style={{ background: m.color }} />
+                    <div>
+                      <p className="text-foreground"><strong>{a.name}</strong> {a.action}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{a.city} · {a.ago}</p>
+                    </div>
+                  </li>
+                </Reveal>
+              );
+            })}
           </ul>
         </div>
       </div>
