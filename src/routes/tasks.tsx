@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { CAUSES, CITIES, TASKS, TIME_SLOTS, type Cause, type City } from "@/lib/data";
-import { useProfile } from "@/lib/profile";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { CAUSES, CITIES, TIME_SLOTS, causeMeta } from "@/lib/data";
+import { tasksQuery } from "@/lib/queries";
+import { useAuth } from "@/lib/auth";
 import { TaskCard } from "@/components/TaskCard";
+import { Reveal } from "@/lib/motion";
 
 export const Route = createFileRoute("/tasks")({
   head: () => ({
@@ -16,11 +19,13 @@ export const Route = createFileRoute("/tasks")({
   component: TasksPage,
 });
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({ active, onClick, children, color }: { active: boolean; onClick: () => void; children: ReactNode; color?: string }) {
+  const c = color ?? "var(--foreground)";
   return (
     <button
       onClick={onClick}
-      className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-foreground hover:border-primary/50"}`}
+      className="rounded-full border px-3.5 py-1.5 text-sm transition-all active:scale-95"
+      style={active ? { background: c, borderColor: c, color: "var(--primary-foreground)" } : { borderColor: "var(--border)", background: "var(--card)" }}
     >
       {children}
     </button>
@@ -28,30 +33,32 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 }
 
 function TasksPage() {
-  const { profile, hasProfile } = useProfile();
-  const [city, setCity] = useState<City>("London");
-  const [causes, setCauses] = useState<Cause[]>([]);
-  const [maxMinutes, setMaxMinutes] = useState<number>(240);
+  const { profile } = useAuth();
+  const { data: tasks = [], isLoading } = useQuery(tasksQuery);
+  const [city, setCity] = useState("London");
+  const [causes, setCauses] = useState<string[]>([]);
+  const [maxMinutes, setMaxMinutes] = useState(240);
+  const hasPrefs = !!profile?.onboarded;
 
   useEffect(() => {
-    if (hasProfile) {
+    if (profile?.onboarded) {
       setCity(profile.city);
       setCauses(profile.causes);
-      setMaxMinutes(profile.maxMinutes);
+      setMaxMinutes(profile.max_minutes);
     }
-  }, [hasProfile, profile]);
+  }, [profile]);
 
-  const causeOptions = hasProfile && profile.causes.length ? profile.causes : CAUSES;
+  const causeOptions = hasPrefs && profile!.causes.length ? profile!.causes : [...CAUSES];
   const results = useMemo(
-    () => TASKS.filter((t) => t.city === city && t.minutes <= maxMinutes && (causes.length === 0 || causes.includes(t.cause))),
-    [city, causes, maxMinutes],
+    () => tasks.filter((t) => t.city === city && t.minutes <= maxMinutes && (causes.length === 0 || causes.includes(t.cause))),
+    [tasks, city, causes, maxMinutes],
   );
-  const toggle = (c: Cause) => setCauses((cs) => (cs.includes(c) ? cs.filter((x) => x !== c) : [...cs, c]));
+  const toggle = (c: string) => setCauses((cs) => (cs.includes(c) ? cs.filter((x) => x !== c) : [...cs, c]));
 
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
-      <h1 className="font-display text-4xl text-foreground md:text-5xl">Find a task</h1>
-      {hasProfile ? (
+      <h1 className="text-4xl font-bold text-foreground md:text-5xl">Find a task</h1>
+      {hasPrefs ? (
         <p className="mt-2 text-muted-foreground">Tailored to your causes and the time you said you can give.</p>
       ) : (
         <p className="mt-2 text-muted-foreground">
@@ -59,34 +66,28 @@ function TasksPage() {
         </p>
       )}
 
-      <div className="mt-8 space-y-5 rounded-2xl border border-border bg-card p-5">
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="w-16 text-sm font-medium text-foreground">City</span>
-          <select value={city} onChange={(e) => setCity(e.target.value as City)} className="rounded-full border border-border bg-background px-4 py-1.5 text-sm">
-            {CITIES.map((c) => <option key={c}>{c}</option>)}
-          </select>
+      <div className="mt-8 space-y-4 rounded-3xl border border-border bg-card p-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="w-16 text-sm font-semibold text-foreground">City</span>
+          {CITIES.map((c) => <Chip key={c} active={city === c} onClick={() => setCity(c)}>{c}</Chip>)}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-16 text-sm font-medium text-foreground">Time</span>
-          {TIME_SLOTS.map((s) => (
-            <Chip key={s.id} active={maxMinutes === s.max} onClick={() => setMaxMinutes(s.max)}>{s.label}</Chip>
-          ))}
+          <span className="w-16 text-sm font-semibold text-foreground">Time</span>
+          {TIME_SLOTS.map((s) => <Chip key={s.id} color="var(--teal)" active={maxMinutes === s.max} onClick={() => setMaxMinutes(s.max)}>{s.label}</Chip>)}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="w-16 text-sm font-medium text-foreground">Cause</span>
+          <span className="w-16 text-sm font-semibold text-foreground">Cause</span>
           <Chip active={causes.length === 0} onClick={() => setCauses([])}>All</Chip>
-          {causeOptions.map((c) => (
-            <Chip key={c} active={causes.includes(c)} onClick={() => toggle(c)}>{c}</Chip>
-          ))}
+          {causeOptions.map((c) => <Chip key={c} color={causeMeta(c).color} active={causes.includes(c)} onClick={() => toggle(c)}>{c}</Chip>)}
         </div>
       </div>
 
-      <p className="mt-8 text-sm text-muted-foreground">{results.length} task{results.length === 1 ? "" : "s"} found</p>
+      <p className="mt-8 text-sm text-muted-foreground">{isLoading ? "Loading…" : `${results.length} task${results.length === 1 ? "" : "s"} found`}</p>
       <div className="mt-4 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {results.map((t) => <TaskCard key={t.id} task={t} />)}
+        {results.map((t, i) => <Reveal key={t.id} delay={i * 60}><TaskCard task={t} /></Reveal>)}
       </div>
-      {results.length === 0 && (
-        <div className="mt-4 rounded-2xl bg-secondary p-10 text-center text-muted-foreground">No tasks match yet — try more time or another cause.</div>
+      {!isLoading && results.length === 0 && (
+        <div className="mt-4 rounded-3xl bg-secondary p-10 text-center text-muted-foreground">No tasks match yet — try more time or another cause.</div>
       )}
     </div>
   );
