@@ -30,8 +30,8 @@ function MapPage() {
       <h1 className="text-4xl font-bold text-foreground md:text-5xl">What's happening across the UK</h1>
       <p className="mt-2 text-muted-foreground">Tap a city to see where hands are needed.</p>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,380px)_1fr]">
-        <UKMap tasks={tasks} selected={city} onSelect={setCity} className="lg:sticky lg:top-24 lg:self-start" />
+      <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,280px)_1fr] lg:gap-8">
+        <UKMap tasks={tasks} selected={city} onSelect={setCity} maxWidth={280} className="lg:sticky lg:top-24 lg:self-start" />
         <div>
           <h2 className="text-2xl font-bold text-foreground">{city}</h2>
           <div className="mt-3 flex flex-wrap gap-2">
