@@ -114,6 +114,7 @@ export type Database = {
           org: string
           points: number
           spots: number
+          starts_at: string | null
           title: string
           when_label: string
         }
@@ -127,6 +128,7 @@ export type Database = {
           org: string
           points: number
           spots: number
+          starts_at?: string | null
           title: string
           when_label: string
         }
@@ -140,6 +142,7 @@ export type Database = {
           org?: string
           points?: number
           spots?: number
+          starts_at?: string | null
           title?: string
           when_label?: string
         }
