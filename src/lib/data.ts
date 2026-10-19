@@ -38,16 +38,18 @@ export const CAUSE_META: Record<Cause, { color: string; icon: LucideIcon }> = {
 };
 export const causeMeta = (c: string) => CAUSE_META[c as Cause] ?? CAUSE_META.Environment;
 
+/** Each way of helping, with one line on what it actually involves. */
 export const SKILLS = [
-  "Heavy lifting",
-  "Driving",
-  "Cooking",
-  "Tutoring",
-  "Gardening",
-  "Admin & digital",
-  "Event setup",
-  "Companionship",
+  { label: "Lifting & carrying", blurb: "Moving boxes, chairs or supplies that are too heavy for one person." },
+  { label: "Driving & deliveries", blurb: "Using your own car to collect or drop off food, kit or equipment." },
+  { label: "Cooking & food prep", blurb: "Preparing, portioning or serving meals in a community kitchen." },
+  { label: "Reading & tutoring", blurb: "Sitting with children or adults to read, practise or get through homework." },
+  { label: "Gardening & planting", blurb: "Planting, weeding, watering or tidying up an outdoor space." },
+  { label: "Admin & paperwork", blurb: "Sorting files, updating spreadsheets or answering the occasional email." },
+  { label: "Setting up events", blurb: "Putting up signs, laying out chairs and packing everything away again." },
+  { label: "Spending time with people", blurb: "Sharing a chat, a cuppa or an hour of company with someone who's on their own." },
 ] as const;
+
 
 /** 1 point per minute volunteered — keeps tasks proportional to reward costs. */
 export const pointsForMinutes = (minutes: number) => minutes;

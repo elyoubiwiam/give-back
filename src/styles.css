@@ -125,3 +125,5 @@
 @keyframes pointsPop { 0% { opacity: 0; transform: translateY(6px) scale(.8) } 30% { opacity: 1 } 100% { opacity: 0; transform: translateY(-22px) scale(1.2) } }
 @keyframes slideIn { from { opacity: 0; transform: translateX(18px) } to { opacity: 1; transform: translateX(0) } }
 @keyframes slideInBack { from { opacity: 0; transform: translateX(-18px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
+
