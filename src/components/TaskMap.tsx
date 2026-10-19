@@ -39,8 +39,8 @@ export default function TaskMap({
     <div className="overflow-hidden rounded-3xl border border-border" style={{ height }}>
       <MapContainer center={center} zoom={zoom} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
         <TileLayer
-          attribution='&copy; OpenStreetMap &copy; CARTO'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Recenter center={center} zoom={zoom} />
         {tasks.map((t) => {
