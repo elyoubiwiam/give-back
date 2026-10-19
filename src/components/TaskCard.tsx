@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { CalendarPlus, Check, Clock, MapPin, Sparkles } from "lucide-react";
+import { CalendarDays, CalendarPlus, Check, Clock, MapPin, Sparkles } from "lucide-react";
 import { downloadIcs, googleCalendarUrl, outlookCalendarUrl } from "@/lib/calendar";
 import { toast } from "sonner";
-import { causeMeta, formatMinutes, rewardEquivalent, type Task } from "@/lib/data";
+import { causeMeta, formatMinutes, formatTaskWhen, rewardEquivalent, type Task } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { notifyTaskJoined } from "@/lib/notify.functions";
@@ -67,7 +67,7 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
           <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatMinutes(task.minutes)}</span>
           <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{task.city}</span>
-          <span>{task.when_label}</span>
+          <span className="flex items-center gap-1 font-medium text-foreground"><CalendarDays className="h-3.5 w-3.5" />{formatTaskWhen(task)}</span>
         </div>
         <div className="mt-3 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-secondary-foreground">
           <span className="font-semibold text-primary">Earn {task.points} pts</span> · {rewardEquivalent(task.points)}

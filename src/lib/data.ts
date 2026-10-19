@@ -122,3 +122,13 @@ export function levelFor(points: number) {
 }
 
 export const formatMinutes = (m: number) => (m < 60 ? `${m} min` : `${m / 60} h`);
+
+/** "Sat 20 Oct · 11:00" — exact day, month and time, always in UK local time. */
+export function formatTaskWhen(task: { starts_at?: string | null; when_label: string }) {
+  if (!task.starts_at) return task.when_label;
+  const d = new Date(task.starts_at);
+  const date = new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Europe/London" }).format(d);
+  const time = new Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "2-digit", timeZone: "Europe/London" }).format(d);
+  return `${date} · ${time}`;
+}
+
