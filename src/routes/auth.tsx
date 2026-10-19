@@ -1,34 +1,60 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Clock, Gift, Heart } from "lucide-react";
+import { SupportBox } from "@/components/SupportBox";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/lib/auth";
 
+type Mode = "signin" | "signup" | "forgot";
+
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s: Record<string, unknown>): { mode?: Mode | undefined; note?: string | undefined } => ({
+    mode: s["mode"] === "signin" || s["mode"] === "forgot" ? s["mode"] : undefined,
+    note: typeof s["note"] === "string" ? s["note"] : undefined,
+  }),
   head: () => ({
     meta: [
-      { title: "Sign in — GiveBack" },
-      { name: "description", content: "Sign in or create your GiveBack account to start lending a hand." },
-      { property: "og:title", content: "Sign in — GiveBack" },
-      { property: "og:description", content: "Join GiveBack and help local UK charities." },
+      { title: "Create your free account — GiveBack" },
+      { name: "description", content: "Create a free GiveBack account to get volunteering tasks tailored to the causes you care about." },
+      { property: "og:title", content: "Create your free account — GiveBack" },
+      { property: "og:description", content: "Tasks tailored to your causes and your time. Free, always." },
     ],
   }),
   component: AuthPage,
 });
 
+const SUPPORT_KEY = "giveback-support-pending";
+
+const BENEFITS = [
+  { icon: Heart, text: "Tasks tailored to the causes you care about", color: "var(--coral)" },
+  { icon: Clock, text: "Only tasks that fit the time you have", color: "var(--teal)" },
+  { icon: Gift, text: "Earn points for local rewards", color: "var(--mustard)" },
+];
+
 function AuthPage() {
-  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
+  const search = Route.useSearch();
+  const [mode, setMode] = useState<Mode>(search.mode ?? "signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [support, setSupport] = useState(false);
   const [busy, setBusy] = useState(false);
-  const { user, profile } = useAuth();
+  const { user, profile, refresh } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && profile) navigate({ to: profile.onboarded ? "/tasks" : "/profile" });
-  }, [user, profile, navigate]);
+    if (!user || !profile) return;
+    (async () => {
+      if (sessionStorage.getItem(SUPPORT_KEY) === "1" && !profile.support_giveback) {
+        sessionStorage.removeItem(SUPPORT_KEY);
+        await supabase.from("profiles").update({ support_giveback: true }).eq("id", user.id);
+        await refresh();
+      }
+      navigate({ to: profile.onboarded ? "/tasks" : "/profile" });
+    })();
+  }, [user, profile, navigate, refresh]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,10 +64,10 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/profile", data: { name } },
+          options: { emailRedirectTo: window.location.origin + "/profile", data: { name, support_giveback: support } },
         });
         if (error) throw error;
-        toast.success("Check your inbox", { description: "Confirm your email to finish signing up." });
+        toast.success("Check your inbox", { description: "Confirm your email to finish creating your account." });
       } else if (mode === "signin") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -58,6 +84,7 @@ function AuthPage() {
   };
 
   const google = async () => {
+    if (mode === "signup" && support) sessionStorage.setItem(SUPPORT_KEY, "1");
     const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
     if (res.error) toast.error(res.error.message);
   };
@@ -66,32 +93,44 @@ function AuthPage() {
 
   return (
     <div className="mx-auto grid max-w-5xl gap-10 px-5 py-14 md:grid-cols-2 md:items-center">
-      <div className="hidden md:block">
-        <div className="relative aspect-square">
-          <div className="absolute left-4 top-6 h-40 w-40 animate-[float_6s_ease-in-out_infinite] rounded-[2.5rem] bg-mustard" />
-          <div className="absolute right-6 top-20 h-32 w-32 animate-[float_7s_ease-in-out_infinite_1s] rounded-full bg-teal" />
-          <div className="absolute bottom-10 left-20 h-44 w-44 animate-[float_8s_ease-in-out_infinite_0.5s] rounded-[3rem] bg-coral" />
-          <div className="absolute bottom-24 right-16 h-24 w-24 animate-[float_5s_ease-in-out_infinite] rounded-3xl bg-plum" />
-          <p className="absolute inset-0 grid place-items-center text-center text-3xl font-bold text-foreground">Small tasks.<br />Big kindness.</p>
-        </div>
+      <div>
+        <span className="inline-flex rounded-full bg-sage/25 px-3 py-1 text-sm font-medium text-foreground">Free, always</span>
+        <h1 className="mt-4 text-4xl font-bold leading-tight text-foreground md:text-5xl">
+          Create an account to get tasks <span className="text-primary">tailored to you.</span>
+        </h1>
+        <ul className="mt-8 space-y-4">
+          {BENEFITS.map((b) => (
+            <li key={b.text} className="flex items-center gap-4">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-primary-foreground" style={{ background: b.color }}>
+                <b.icon className="h-5 w-5" />
+              </span>
+              <span className="font-medium text-foreground">{b.text}</span>
+            </li>
+          ))}
+        </ul>
       </div>
+
       <div className="rounded-3xl border border-border bg-card p-7 shadow-[var(--shadow-soft)]">
+        {search.note && mode === "signup" && (
+          <p className="mb-4 rounded-2xl bg-mustard/20 px-4 py-3 text-sm text-foreground">{search.note}</p>
+        )}
         {mode !== "forgot" && (
           <div className="mb-6 grid grid-cols-2 rounded-full bg-secondary p-1">
-            {(["signin", "signup"] as const).map((m) => (
+            {(["signup", "signin"] as const).map((m) => (
               <button key={m} onClick={() => setMode(m)} className={`rounded-full py-2 text-sm font-medium transition ${mode === m ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
                 {m === "signin" ? "Sign in" : "Create account"}
               </button>
             ))}
           </div>
         )}
-        {mode === "forgot" && <h1 className="mb-6 text-2xl font-bold text-foreground">Reset your password</h1>}
+        {mode === "forgot" && <h2 className="mb-6 text-2xl font-bold text-foreground">Reset your password</h2>}
         <form onSubmit={submit} className="space-y-3">
           {mode === "signup" && <input className={input} placeholder="First name" value={name} onChange={(e) => setName(e.target.value)} required />}
           <input className={input} type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           {mode !== "forgot" && <input className={input} type="password" placeholder="Password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required />}
+          {mode === "signup" && <SupportBox checked={support} onChange={setSupport} />}
           <button disabled={busy} className="w-full rounded-full bg-primary py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
-            {mode === "signin" ? "Sign in" : mode === "signup" ? "Create account" : "Send reset link"}
+            {mode === "signin" ? "Sign in" : mode === "signup" ? "Create my free account" : "Send reset link"}
           </button>
         </form>
         {mode === "signin" && (
@@ -112,3 +151,4 @@ function AuthPage() {
     </div>
   );
 }
+

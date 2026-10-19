@@ -46,6 +46,7 @@ export type Database = {
           onboarded: boolean
           points: number
           skills: string[]
+          support_giveback: boolean
         }
         Insert: {
           causes?: string[]
@@ -57,6 +58,7 @@ export type Database = {
           onboarded?: boolean
           points?: number
           skills?: string[]
+          support_giveback?: boolean
         }
         Update: {
           causes?: string[]
@@ -68,6 +70,7 @@ export type Database = {
           onboarded?: boolean
           points?: number
           skills?: string[]
+          support_giveback?: boolean
         }
         Relationships: []
       }

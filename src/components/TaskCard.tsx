@@ -13,8 +13,7 @@ export function useJoinTask() {
   const qc = useQueryClient();
   return async (task: Task) => {
     if (!user) {
-      toast("Sign in to lend a hand", { description: "It takes 20 seconds." });
-      navigate({ to: "/auth" });
+      navigate({ to: "/auth", search: { mode: undefined, note: "Create a free account to join this task and earn points." } });
       return false;
     }
     const { error } = await supabase.rpc("join_task", { _task_id: task.id });

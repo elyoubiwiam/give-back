@@ -5,6 +5,7 @@ import { Crown } from "lucide-react";
 import { RECENT_ACTIONS, causeMeta } from "@/lib/data";
 import { cityStatsQuery, tasksQuery } from "@/lib/queries";
 import { CountUp, Reveal } from "@/lib/motion";
+import { JoinCTA } from "@/components/JoinCTA";
 
 export const Route = createFileRoute("/community")({
   head: () => ({
@@ -115,6 +116,7 @@ function CommunityPage() {
           </ul>
         </div>
       </div>
+      <div className="mt-12"><JoinCTA compact title="Help your city climb the ranking — join free" /></div>
     </div>
   );
 }

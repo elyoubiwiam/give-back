@@ -52,9 +52,12 @@ export function SiteHeader() {
             </button>
           </div>
         ) : (
-          <Link to="/auth" className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background transition-transform hover:scale-105">
-            Sign in
-          </Link>
+          <div className="flex items-center gap-1">
+            <Link to="/auth" search={{ mode: "signin" }} className="hidden rounded-full px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline">Sign in</Link>
+            <Link to="/auth" className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-transform hover:scale-105">
+              Join free
+            </Link>
+          </div>
         )}
       </div>
       <nav className="flex justify-center gap-1 overflow-x-auto border-t border-border/60 px-2 py-2 md:hidden">
