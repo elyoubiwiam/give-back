@@ -25,15 +25,17 @@ export function UKMap({
   selected,
   onSelect,
   className = "",
+  maxWidth,
 }: {
   tasks: Task[];
   selected: City;
   onSelect: (c: City) => void;
   className?: string;
+  maxWidth?: number;
 }) {
   const counts = Object.fromEntries(CITIES.map((c) => [c, tasks.filter((t) => t.city === c).length]));
   return (
-    <div className={`rounded-3xl bg-teal/15 p-4 ${className}`}>
+    <div className={`mx-auto rounded-3xl bg-teal/15 p-4 ${className}`} style={maxWidth ? { maxWidth } : undefined}>
       <svg viewBox="0 0 360 580" className="h-full w-full" role="img" aria-label="Map of UK cities with volunteering tasks">
         <path d={GB_PATH} fill="var(--card)" stroke="var(--border)" strokeWidth={2} strokeLinejoin="round" />
         <path d={NI_PATH} fill="var(--card)" stroke="var(--border)" strokeWidth={2} strokeLinejoin="round" />

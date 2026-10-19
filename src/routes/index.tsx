@@ -92,7 +92,7 @@ function Index() {
             <Link to="/map" className="text-sm font-medium text-primary">Full map →</Link>
           </div>
           <div className="mt-4">
-            <UKMap tasks={tasks} selected={city} onSelect={setCity} className="mx-auto max-w-sm" />
+            <UKMap tasks={tasks} selected={city} onSelect={setCity} maxWidth={260} />
           </div>
         </Reveal>
         <Reveal delay={150}>
