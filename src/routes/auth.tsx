@@ -2,7 +2,6 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Clock, Gift, Heart } from "lucide-react";
-import { SupportBox } from "@/components/SupportBox";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/lib/auth";
@@ -25,7 +24,6 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const SUPPORT_KEY = "giveback-support-pending";
 
 const BENEFITS = [
   { icon: Heart, text: "Tasks tailored to the causes you care about", color: "var(--coral)" },
@@ -39,22 +37,14 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [support, setSupport] = useState(false);
   const [busy, setBusy] = useState(false);
-  const { user, profile, refresh } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!user || !profile) return;
-    (async () => {
-      if (sessionStorage.getItem(SUPPORT_KEY) === "1" && !profile.support_giveback) {
-        sessionStorage.removeItem(SUPPORT_KEY);
-        await supabase.from("profiles").update({ support_giveback: true }).eq("id", user.id);
-        await refresh();
-      }
-      navigate({ to: profile.onboarded ? "/tasks" : "/profile" });
-    })();
-  }, [user, profile, navigate, refresh]);
+    navigate({ to: profile.onboarded ? "/tasks" : "/profile" });
+  }, [user, profile, navigate]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +54,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/profile", data: { name, support_giveback: support } },
+          options: { emailRedirectTo: window.location.origin + "/profile", data: { name } },
         });
         if (error) throw error;
         toast.success("Check your inbox", { description: "Confirm your email to finish creating your account." });
@@ -84,7 +74,6 @@ function AuthPage() {
   };
 
   const google = async () => {
-    if (mode === "signup" && support) sessionStorage.setItem(SUPPORT_KEY, "1");
     const res = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/auth" });
     if (res.error) toast.error(res.error.message);
   };
@@ -128,7 +117,6 @@ function AuthPage() {
           {mode === "signup" && <input className={input} placeholder="First name" value={name} onChange={(e) => setName(e.target.value)} required />}
           <input className={input} type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           {mode !== "forgot" && <input className={input} type="password" placeholder="Password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required />}
-          {mode === "signup" && <SupportBox checked={support} onChange={setSupport} />}
           <button disabled={busy} className="w-full rounded-full bg-primary py-3 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
             {mode === "signin" ? "Sign in" : mode === "signup" ? "Create my free account" : "Send reset link"}
           </button>

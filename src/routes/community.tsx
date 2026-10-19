@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { Crown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Crown } from "lucide-react";
 import { RECENT_ACTIONS, causeMeta } from "@/lib/data";
 import { cityStatsQuery, tasksQuery } from "@/lib/queries";
 import { CountUp, Reveal } from "@/lib/motion";
@@ -31,6 +31,15 @@ function CommunityPage() {
   const { data: stats = [] } = useQuery(cityStatsQuery);
   const { data: tasks = [] } = useQuery(tasksQuery);
   const [metric, setMetric] = useState<Metric>("hours");
+  const [page, setPage] = useState(0);
+  const [dir, setDir] = useState<"next" | "prev">("next");
+  const PAGE = 5;
+  const pages = Math.max(1, Math.ceil(RECENT_ACTIONS.length / PAGE));
+  const visible = RECENT_ACTIONS.slice(page * PAGE, page * PAGE + PAGE);
+  const go = (d: "next" | "prev") => {
+    setDir(d);
+    setPage((p) => Math.min(pages - 1, Math.max(0, p + (d === "next" ? 1 : -1))));
+  };
   const sorted = useMemo(() => [...stats].sort((a, b) => b[metric] - a[metric]), [stats, metric]);
   const max = sorted[0]?.[metric] ?? 1;
   const podium = [sorted[1], sorted[0], sorted[2]];
@@ -97,20 +106,29 @@ function CommunityPage() {
           ))}
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Latest actions</h2>
-          <ul className="mt-4 space-y-3">
-            {RECENT_ACTIONS.map((a, i) => {
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-2xl font-bold text-foreground">Latest actions</h2>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-muted-foreground">{page + 1} / {pages}</span>
+              <button onClick={() => go("prev")} disabled={page === 0} aria-label="Previous actions" className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card text-foreground transition hover:-translate-y-0.5 hover:bg-secondary disabled:pointer-events-none disabled:opacity-35">
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button onClick={() => go("next")} disabled={page === pages - 1} aria-label="Next actions" className="grid h-9 w-9 place-items-center rounded-full border border-border bg-card text-foreground transition hover:-translate-y-0.5 hover:bg-secondary disabled:pointer-events-none disabled:opacity-35">
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <ul key={page} className={`mt-4 space-y-3 ${dir === "next" ? "animate-[slideIn_.35s_ease]" : "animate-[slideInBack_.35s_ease]"}`}>
+            {visible.map((a) => {
               const m = causeMeta(a.cause);
               return (
-                <Reveal key={i} delay={i * 50}>
-                  <li className="flex gap-3 rounded-2xl bg-card p-4 text-sm">
-                    <span className="mt-1 h-3 w-3 shrink-0 rounded-full" style={{ background: m.color }} />
-                    <div>
-                      <p className="text-foreground"><strong>{a.name}</strong> {a.action}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{a.city} · {a.ago}</p>
-                    </div>
-                  </li>
-                </Reveal>
+                <li key={`${a.name}-${a.action}`} className="flex gap-3 rounded-2xl bg-card p-4 text-sm transition-all hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]">
+                  <span className="mt-1 h-3 w-3 shrink-0 rounded-full" style={{ background: m.color }} />
+                  <div>
+                    <p className="text-foreground"><strong>{a.name}</strong> {a.action}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{a.city} · {a.ago}</p>
+                  </div>
+                </li>
               );
             })}
           </ul>
