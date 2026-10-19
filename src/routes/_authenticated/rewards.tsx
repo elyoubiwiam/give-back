@@ -18,7 +18,8 @@ export const Route = createFileRoute("/_authenticated/rewards")({
 });
 
 function RewardsPage() {
-  const { profile } = useAuth();
+  const { profile, joined } = useAuth();
+  const freeReward = joined.size > 0;
   const pts = profile?.points ?? 0;
   const { current, next } = levelFor(pts);
   const pct = next ? ((pts - current.min) / (next.min - current.min)) * 100 : 100;
@@ -44,6 +45,14 @@ function RewardsPage() {
         </div>
       </div>
 
+      <div className={`mt-6 flex items-center gap-4 rounded-3xl border-2 p-5 ${freeReward ? "border-primary bg-primary/10" : "border-dashed border-border"}`}>
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-mustard text-primary-foreground"><Gift className="h-5 w-5" /></span>
+        <div>
+          <p className="font-semibold text-foreground">{freeReward ? "Welcome gift unlocked: pick 1 reward for free" : "Your first task unlocks 1 free reward"}</p>
+          <p className="text-sm text-muted-foreground">{freeReward ? "Thanks for your first good deed — choose any partner reward below, no points needed." : "Join any task and you'll get one partner reward on us, whatever its points."}</p>
+        </div>
+      </div>
+
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {REWARDS.map((r, i) => (
           <Reveal key={r.id} delay={i * 70}>
@@ -56,11 +65,11 @@ function RewardsPage() {
               <div className="mt-auto flex items-center justify-between pt-6">
                 <span className="font-semibold text-primary">{r.cost} pts</span>
                 <button
-                  disabled={pts < r.cost}
+                  disabled={!freeReward && pts < r.cost}
                   onClick={() => toast("Vouchers launch soon", { description: "We're finalising partner codes." })}
                   className="rounded-full bg-foreground px-4 py-2 text-sm text-background transition active:scale-95 disabled:opacity-30"
                 >
-                  Redeem
+                  {freeReward && pts < r.cost ? "Redeem free" : "Redeem"}
                 </button>
               </div>
             </div>
