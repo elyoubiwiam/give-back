@@ -78,6 +78,7 @@ export type Task = {
   minutes: number;
   points: number;
   when_label: string;
+  starts_at?: string | null;
   spots: number;
   lat: number;
   lng: number;

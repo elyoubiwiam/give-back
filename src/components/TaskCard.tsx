@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Clock, MapPin, Sparkles } from "lucide-react";
+import { CalendarPlus, Check, Clock, MapPin, Sparkles } from "lucide-react";
+import { downloadIcs, googleCalendarUrl, outlookCalendarUrl } from "@/lib/calendar";
 import { toast } from "sonner";
 import { causeMeta, formatMinutes, rewardEquivalent, type Task } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
@@ -21,7 +22,10 @@ export function useJoinTask() {
       toast.error(error.message.includes("duplicate") ? "You've already joined this one" : error.message);
       return false;
     }
-    toast.success(`+${task.points} points!`, { description: `You're in for "${task.title}".` });
+    toast.success(`+${task.points} points!`, {
+      description: `You're in for "${task.title}".`,
+      action: { label: "Add to calendar", onClick: () => window.open(googleCalendarUrl(task), "_blank") },
+    });
     if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first task earns you a welcome reward — pick it in Rewards." });
     await refresh();
     qc.invalidateQueries({ queryKey: ["city-stats"] });
@@ -87,8 +91,21 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           >
             {isJoined ? (<><Check className="h-4 w-4" /> Joined</>) : "Lend a hand"}
           </button>
+          {isJoined && <CalendarLinks task={task} />}
         </div>
       </div>
     </article>
+  );
+}
+
+function CalendarLinks({ task }: { task: Task }) {
+  const cls = "rounded-full border border-border px-3 py-1 hover:border-primary hover:text-primary";
+  return (
+    <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+      <CalendarPlus className="h-3.5 w-3.5" /> Add to:
+      <a className={cls} href={googleCalendarUrl(task)} target="_blank" rel="noreferrer">Google</a>
+      <a className={cls} href={outlookCalendarUrl(task)} target="_blank" rel="noreferrer">Outlook</a>
+      <button className={cls} onClick={() => downloadIcs(task)}>Apple / other</button>
+    </div>
   );
 }
