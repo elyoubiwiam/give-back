@@ -49,6 +49,19 @@ export const SKILLS = [
   "Companionship",
 ] as const;
 
+/** 1 point per minute volunteered — keeps tasks proportional to reward costs. */
+export const pointsForMinutes = (minutes: number) => minutes;
+
+/** Share of a reward a task earns, e.g. "Half a free flat white". */
+export function rewardEquivalent(points: number) {
+  const sorted = [...REWARDS].sort((a, b) => b.cost - a.cost);
+  const full = sorted.find((r) => r.cost <= points);
+  if (full) return `Enough for: ${full.offer.toLowerCase()} at ${full.partner}`;
+  const r = [...REWARDS].sort((a, b) => a.cost - b.cost)[0]!;
+  const pct = Math.round((points / r.cost) * 100);
+  return `${pct}% of ${r.offer.toLowerCase()} at ${r.partner}`;
+}
+
 export const TIME_SLOTS = [
   { id: "30", label: "Under 30 min", max: 30 },
   { id: "60", label: "Up to 1 hour", max: 60 },

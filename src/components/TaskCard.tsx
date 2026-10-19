@@ -3,7 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, Clock, MapPin, Sparkles } from "lucide-react";
 import { toast } from "sonner";
-import { causeMeta, formatMinutes, type Task } from "@/lib/data";
+import { causeMeta, formatMinutes, rewardEquivalent, type Task } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -61,6 +61,9 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatMinutes(task.minutes)}</span>
           <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{task.city}</span>
           <span>{task.when_label}</span>
+        </div>
+        <div className="mt-3 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-secondary-foreground">
+          <span className="font-semibold text-primary">Earn {task.points} pts</span> · {rewardEquivalent(task.points)}
         </div>
         {!compact && (
           <div className="mt-4">
