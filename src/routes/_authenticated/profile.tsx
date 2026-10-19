@@ -74,7 +74,7 @@ function ProfilePage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">Causes that matter to you</h2>
+          <h2 className="text-lg font-semibold text-foreground">Causes that matter the most to you (you can choose all too)</h2>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {CAUSES.map((c) => {
               const m = causeMeta(c);
@@ -103,7 +103,7 @@ function ProfilePage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">Time you can give per task</h2>
+          <h2 className="text-lg font-semibold text-foreground">Time you're able to give</h2>
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {TIME_SLOTS.map((t) => (
               <button key={t.id} className={`rounded-2xl border-2 px-3 py-4 text-sm font-medium transition active:scale-95 ${maxMinutes === t.max ? "border-teal bg-teal text-primary-foreground" : "border-border bg-card"}`} onClick={() => setMaxMinutes(t.max)}>{t.label}</button>
