@@ -10,9 +10,9 @@ import { useAuth } from "@/lib/auth";
 type Mode = "signin" | "signup" | "forgot";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): { mode?: Mode; note?: string } => ({
-    mode: s.mode === "signin" || s.mode === "forgot" ? s.mode : undefined,
-    note: typeof s.note === "string" ? s.note : undefined,
+  validateSearch: (s: Record<string, unknown>): { mode?: Mode | undefined; note?: string | undefined } => ({
+    mode: s["mode"] === "signin" || s["mode"] === "forgot" ? s["mode"] : undefined,
+    note: typeof s["note"] === "string" ? s["note"] : undefined,
   }),
   head: () => ({
     meta: [
