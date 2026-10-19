@@ -74,7 +74,16 @@ function ProfilePage() {
         </section>
 
         <section>
-          <h2 className="text-lg font-semibold text-foreground">Causes that matter the most to you (you can choose all too)</h2>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-foreground">Causes that matter the most to you (you can choose all too)</h2>
+            <button
+              onClick={() => setCauses(causes.length === CAUSES.length ? [] : [...CAUSES])}
+              className="rounded-full border border-primary/45 px-3.5 py-1.5 text-xs font-medium text-primary transition-all hover:bg-primary hover:text-primary-foreground active:scale-95"
+            >
+              {causes.length === CAUSES.length ? "Clear all" : "Choose all"}
+            </button>
+          </div>
+
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {CAUSES.map((c) => {
               const m = causeMeta(c);
