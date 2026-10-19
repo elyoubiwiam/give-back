@@ -11,4 +11,4 @@
 - Show a fading booking confirmation with task details and calendar links after joining; real booking and calendar download verified.
 
 ## Open
-- (none)
+- Add safe task cancellation and a profile summary of booked tasks.
