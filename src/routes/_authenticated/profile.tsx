@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { CAUSES, CITIES, SKILLS, TIME_SLOTS, causeMeta } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
+import { SupportBox } from "@/components/SupportBox";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -28,6 +29,7 @@ function ProfilePage() {
   const [skills, setSkills] = useState<string[]>([]);
   const [maxMinutes, setMaxMinutes] = useState(120);
   const [saving, setSaving] = useState(false);
+  const [support, setSupport] = useState(false);
 
   useEffect(() => {
     if (!profile) return;
@@ -36,6 +38,7 @@ function ProfilePage() {
     setCauses(profile.causes);
     setSkills(profile.skills);
     setMaxMinutes(profile.max_minutes);
+    setSupport(profile.support_giveback);
   }, [profile]);
 
   const submit = async () => {
@@ -45,7 +48,7 @@ function ProfilePage() {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ name: name.trim(), city, causes, skills, max_minutes: maxMinutes, onboarded: true })
+      .update({ name: name.trim(), city, causes, skills, max_minutes: maxMinutes, support_giveback: support, onboarded: true })
       .eq("id", user.id);
     setSaving(false);
     if (error) return void toast.error(error.message);
@@ -110,6 +113,8 @@ function ProfilePage() {
             ))}
           </div>
         </section>
+
+        <SupportBox checked={support} onChange={setSupport} />
 
         <button disabled={saving} onClick={submit} className="w-full rounded-full bg-primary py-3.5 font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60">
           Save & show my tasks
