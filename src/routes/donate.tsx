@@ -15,15 +15,18 @@ export const Route = createFileRoute("/donate")({
   component: DonatePage,
 });
 
-const CHARITIES = ["Hackney Food Bank", "Mustard Tree", "Age Together", "Bristol Green", "Streetwise Edinburgh", "Where it's needed most"];
+const CHARITIES = ["Hackney Food Bank", "Mustard Tree", "Age Together", "Bristol Green", "Streetwise Edinburgh"];
 const AMOUNTS = [5, 10, 25, 50];
 
 function DonatePage() {
   const [amount, setAmount] = useState(10);
-  const [charity, setCharity] = useState(CHARITIES[5]);
+  const [charity, setCharity] = useState(CHARITIES[0]);
   const [monthly, setMonthly] = useState(false);
   const [tip, setTip] = useState(false);
   const [tipAmount, setTipAmount] = useState(2);
+  const [customAmount, setCustomAmount] = useState("");
+  const [customTip, setCustomTip] = useState("");
+  const clean = (v: string) => v.replace(/[^0-9.]/g, "").slice(0, 7);
 
   return (
     <div className="mx-auto max-w-xl px-5 py-12">
@@ -41,8 +44,14 @@ function DonatePage() {
           <span className="text-sm font-medium text-foreground">Amount</span>
           <div className="mt-2 grid grid-cols-4 gap-2">
             {AMOUNTS.map((a) => (
-              <button key={a} onClick={() => setAmount(a)} className={`rounded-xl border py-3 text-lg ${amount === a ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>£{a}</button>
+              <button key={a} onClick={() => { setAmount(a); setCustomAmount(""); }} className={`rounded-xl border py-3 text-lg ${amount === a && !customAmount ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>£{a}</button>
             ))}
+          </div>
+          <div className={`mt-2 flex items-center rounded-xl border px-4 ${customAmount ? "border-primary" : "border-border"}`}>
+            <span className="text-muted-foreground">£</span>
+            <input inputMode="decimal" placeholder="Other amount" value={customAmount}
+              onChange={(e) => { const v = clean(e.target.value); setCustomAmount(v); if (Number(v) > 0) setAmount(Number(v)); }}
+              className="w-full bg-transparent px-2 py-3 outline-none" />
           </div>
         </div>
         <label className="flex items-center gap-3 text-sm text-foreground">
@@ -58,10 +67,16 @@ function DonatePage() {
             </span>
           </label>
           {tip && (
-            <div className="mt-3 flex gap-2 pl-7">
+            <div className="mt-3 flex flex-wrap gap-2 pl-7">
               {[1, 2, 5].map((t) => (
-                <button key={t} onClick={() => setTipAmount(t)} className={`rounded-full border px-4 py-1.5 text-sm font-medium ${tipAmount === t ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>£{t}</button>
+                <button key={t} onClick={() => { setTipAmount(t); setCustomTip(""); }} className={`rounded-full border px-4 py-1.5 text-sm font-medium ${tipAmount === t && !customTip ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card"}`}>£{t}</button>
               ))}
+              <div className={`flex w-28 items-center rounded-full border bg-card px-3 ${customTip ? "border-primary" : "border-border"}`}>
+                <span className="text-sm text-muted-foreground">£</span>
+                <input inputMode="decimal" placeholder="Other" value={customTip}
+                  onChange={(e) => { const v = clean(e.target.value); setCustomTip(v); if (Number(v) > 0) setTipAmount(Number(v)); }}
+                  className="w-full bg-transparent px-1 py-1.5 text-sm outline-none" />
+              </div>
             </div>
           )}
         </div>
