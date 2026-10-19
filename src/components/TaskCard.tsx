@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { causeMeta, formatMinutes, rewardEquivalent, type Task } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
+import { notifyTaskJoined } from "@/lib/notify.functions";
 
 export function useJoinTask() {
   const { user, refresh, joined } = useAuth();
@@ -22,6 +23,7 @@ export function useJoinTask() {
       toast.error(error.message.includes("duplicate") ? "You've already joined this one" : error.message);
       return false;
     }
+    notifyTaskJoined({ data: { taskId: task.id } }).catch((e) => console.error(e));
     toast.success(`+${task.points} points!`, {
       description: `You're in for "${task.title}".`,
       action: { label: "Add to calendar", onClick: () => window.open(googleCalendarUrl(task), "_blank") },
