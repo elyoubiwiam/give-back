@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { canRedeemWelcomeReward } from "./reward-rules";
 
 describe("first-action welcome reward", () => {
