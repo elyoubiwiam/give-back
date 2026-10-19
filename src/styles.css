@@ -26,6 +26,9 @@
   --color-coral: var(--coral);
   --color-plum: var(--plum);
   --color-teal: var(--teal);
+  --color-sky: var(--sky);
+  --color-grape: var(--grape);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -94,6 +97,9 @@
   --coral: oklch(0.7 0.15 25);
   --plum: oklch(0.5 0.12 340);
   --teal: oklch(0.58 0.09 200);
+  --sky: oklch(0.6 0.13 250);
+  --grape: oklch(0.55 0.16 300);
+
   --shadow-soft: 0 12px 30px -14px color-mix(in oklab, var(--primary) 35%, transparent);
   --chart-1: oklch(0.62 0.15 40);
   --chart-2: oklch(0.7 0.1 85);
@@ -125,3 +131,5 @@
 @keyframes pointsPop { 0% { opacity: 0; transform: translateY(6px) scale(.8) } 30% { opacity: 1 } 100% { opacity: 0; transform: translateY(-22px) scale(1.2) } }
 @keyframes slideIn { from { opacity: 0; transform: translateX(18px) } to { opacity: 1; transform: translateX(0) } }
 @keyframes slideInBack { from { opacity: 0; transform: translateX(-18px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes riseIn { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: translateY(0) } }
+

@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CAUSES, CITIES, SKILLS, TIME_SLOTS, causeMeta } from "@/lib/data";
 import { useAuth } from "@/lib/auth";
+import { Check } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -107,9 +109,22 @@ function ProfilePage() {
         <section>
           <h2 className="text-lg font-semibold text-foreground">How you can help</h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {SKILLS.map((s) => <button key={s} className={chip(skills.includes(s))} onClick={() => setSkills(toggle(skills, s))}>{s}</button>)}
+            {SKILLS.map((s) => (
+              <button key={s.label} className={chip(skills.includes(s.label))} onClick={() => setSkills(toggle(skills, s.label))}>{s.label}</button>
+            ))}
           </div>
+          {skills.length > 0 && (
+            <ul className="mt-4 space-y-2">
+              {SKILLS.filter((s) => skills.includes(s.label)).map((s) => (
+                <li key={s.label} className="flex items-start gap-2 rounded-2xl bg-secondary/60 px-4 py-3 text-sm text-secondary-foreground animate-[riseIn_0.35s_ease-out]">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span><span className="font-semibold text-foreground">{s.label}:</span> {s.blurb}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
+
 
         <section>
           <h2 className="text-lg font-semibold text-foreground">Time you're able to give</h2>
