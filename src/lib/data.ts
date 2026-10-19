@@ -57,7 +57,7 @@ export function rewardEquivalent(points: number) {
   const sorted = [...REWARDS].sort((a, b) => b.cost - a.cost);
   const full = sorted.find((r) => r.cost <= points);
   if (full) return `Enough for: ${full.offer.toLowerCase()} at ${full.partner}`;
-  const r = [...REWARDS].sort((a, b) => a.cost - b.cost)[0];
+  const r = [...REWARDS].sort((a, b) => a.cost - b.cost)[0]!;
   const pct = Math.round((points / r.cost) * 100);
   return `${pct}% of ${r.offer.toLowerCase()} at ${r.partner}`;
 }
