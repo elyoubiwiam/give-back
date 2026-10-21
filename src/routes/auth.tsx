@@ -41,7 +41,8 @@ const CHARITY_BENEFITS = [
 
 function AuthPage() {
   const search = Route.useSearch();
-  const [mode, setMode] = useState<Mode>(search.mode ?? "signup");
+  const isCharity = search.as === "charity";
+  const [mode, setMode] = useState<Mode>(search.mode ?? (isCharity ? "signin" : "signup"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
