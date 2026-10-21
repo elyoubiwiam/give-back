@@ -36,6 +36,13 @@
       "when": 1792614920121,
       "tag": "0004_charity_side",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792617017445,
+      "tag": "0005_task_details",
+      "breakpoints": true
     }
   ]
 }
