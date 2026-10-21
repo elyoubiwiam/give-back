@@ -54,7 +54,7 @@ function CharityProfile() {
     const { id, owner_id, active, login_email, created_at, ...rest } = c;
     const { error } = await supabase.from("charities").update(rest).eq("id", id);
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Profile saved");
     qc.invalidateQueries({ queryKey: ["my-charity"] }); qc.invalidateQueries({ queryKey: ["tasks"] });
   };
@@ -63,7 +63,7 @@ function CharityProfile() {
     const { data: u } = await supabase.auth.getUser();
     const path = `${u.user!.id}/${Date.now()}-${file.name.replace(/[^\w.-]/g, "_")}`;
     const { error } = await supabase.storage.from("charity-docs").upload(path, file);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     set({ doc_path: path }); toast.success("Document uploaded — press Save");
   };
 

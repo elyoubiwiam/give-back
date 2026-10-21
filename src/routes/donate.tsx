@@ -93,7 +93,7 @@ function DonatePage() {
             setBusy(true);
             const { error } = await supabase.from("donations").insert({ charity_id: charity, user_id: user?.id ?? null, amount_pence: Math.round(amount * 100), giveback_pence: tip ? Math.round(tipAmount * 100) : 0, monthly });
             setBusy(false);
-            if (error) return toast.error(error.message);
+            if (error) return void toast.error(error.message);
             toast("Thank you — your pledge is saved", { description: "Secure card payments are being set up; we'll let the charity know." });
           }}
           className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 font-medium text-primary-foreground hover:opacity-90"

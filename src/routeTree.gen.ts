@@ -20,7 +20,9 @@ import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as AuthenticatedCharityRouteRouteImport } from './routes/_authenticated/charity/route'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
+import { Route as AuthenticatedAdminCharitiesRouteImport } from './routes/_authenticated/admin.charities'
 import { Route as AuthenticatedCharityIndexRouteImport } from './routes/_authenticated/charity/index'
+import { Route as AuthenticatedCharityProfileRouteImport } from './routes/_authenticated/charity/profile'
 import { Route as AuthenticatedCharityTasksRouteImport } from './routes/_authenticated/charity/tasks'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
@@ -79,10 +81,22 @@ const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
   path: '/rewards',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminCharitiesRoute =
+  AuthenticatedAdminCharitiesRouteImport.update({
+    id: '/admin/charities',
+    path: '/admin/charities',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedCharityIndexRoute =
   AuthenticatedCharityIndexRouteImport.update({
     id: '/',
     path: '/',
+    getParentRoute: () => AuthenticatedCharityRouteRoute,
+  } as any)
+const AuthenticatedCharityProfileRoute =
+  AuthenticatedCharityProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
     getParentRoute: () => AuthenticatedCharityRouteRoute,
   } as any)
 const AuthenticatedCharityTasksRoute =
@@ -109,6 +123,8 @@ export interface FileRoutesByFullPath {
   '/charity': typeof AuthenticatedCharityRouteRouteWithChildren
   '/profile': typeof AuthenticatedProfileRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/admin/charities': typeof AuthenticatedAdminCharitiesRoute
+  '/charity/profile': typeof AuthenticatedCharityProfileRoute
   '/charity/tasks': typeof AuthenticatedCharityTasksRoute
   '/charity/': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -123,6 +139,8 @@ export interface FileRoutesByTo {
   '/tasks': typeof TasksRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/admin/charities': typeof AuthenticatedAdminCharitiesRoute
+  '/charity/profile': typeof AuthenticatedCharityProfileRoute
   '/charity/tasks': typeof AuthenticatedCharityTasksRoute
   '/charity': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -140,6 +158,8 @@ export interface FileRoutesById {
   '/_authenticated/charity': typeof AuthenticatedCharityRouteRouteWithChildren
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/_authenticated/admin/charities': typeof AuthenticatedAdminCharitiesRoute
+  '/_authenticated/charity/profile': typeof AuthenticatedCharityProfileRoute
   '/_authenticated/charity/tasks': typeof AuthenticatedCharityTasksRoute
   '/_authenticated/charity/': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -157,6 +177,8 @@ export interface FileRouteTypes {
     | '/charity'
     | '/profile'
     | '/rewards'
+    | '/admin/charities'
+    | '/charity/profile'
     | '/charity/tasks'
     | '/charity/'
     | '/lovable/email/transactional/preview'
@@ -171,6 +193,8 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/profile'
     | '/rewards'
+    | '/admin/charities'
+    | '/charity/profile'
     | '/charity/tasks'
     | '/charity'
     | '/lovable/email/transactional/preview'
@@ -187,6 +211,8 @@ export interface FileRouteTypes {
     | '/_authenticated/charity'
     | '/_authenticated/profile'
     | '/_authenticated/rewards'
+    | '/_authenticated/admin/charities'
+    | '/_authenticated/charity/profile'
     | '/_authenticated/charity/tasks'
     | '/_authenticated/charity/'
     | '/lovable/email/transactional/preview'
@@ -283,11 +309,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRewardsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/charities': {
+      id: '/_authenticated/admin/charities'
+      path: '/admin/charities'
+      fullPath: '/admin/charities'
+      preLoaderRoute: typeof AuthenticatedAdminCharitiesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/charity/': {
       id: '/_authenticated/charity/'
       path: '/'
       fullPath: '/charity/'
       preLoaderRoute: typeof AuthenticatedCharityIndexRouteImport
+      parentRoute: typeof AuthenticatedCharityRouteRoute
+    }
+    '/_authenticated/charity/profile': {
+      id: '/_authenticated/charity/profile'
+      path: '/profile'
+      fullPath: '/charity/profile'
+      preLoaderRoute: typeof AuthenticatedCharityProfileRouteImport
       parentRoute: typeof AuthenticatedCharityRouteRoute
     }
     '/_authenticated/charity/tasks': {
@@ -308,12 +348,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedCharityRouteRouteChildren {
+  AuthenticatedCharityProfileRoute: typeof AuthenticatedCharityProfileRoute
   AuthenticatedCharityTasksRoute: typeof AuthenticatedCharityTasksRoute
   AuthenticatedCharityIndexRoute: typeof AuthenticatedCharityIndexRoute
 }
 
 const AuthenticatedCharityRouteRouteChildren: AuthenticatedCharityRouteRouteChildren =
   {
+    AuthenticatedCharityProfileRoute: AuthenticatedCharityProfileRoute,
     AuthenticatedCharityTasksRoute: AuthenticatedCharityTasksRoute,
     AuthenticatedCharityIndexRoute: AuthenticatedCharityIndexRoute,
   }
@@ -327,12 +369,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCharityRouteRoute: typeof AuthenticatedCharityRouteRouteWithChildren
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
+  AuthenticatedAdminCharitiesRoute: typeof AuthenticatedAdminCharitiesRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCharityRouteRoute: AuthenticatedCharityRouteRouteWithChildren,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
+  AuthenticatedAdminCharitiesRoute: AuthenticatedAdminCharitiesRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

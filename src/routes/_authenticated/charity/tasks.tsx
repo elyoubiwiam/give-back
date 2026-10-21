@@ -55,10 +55,10 @@ function CharityTasks() {
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValidTaskMinutes(f.minutes)) return toast.error("Tasks can last up to half a day (4 hours).");
-    if (!f.date) return toast.error("Pick a date");
+    if (!isValidTaskMinutes(f.minutes)) return void toast.error("Tasks can last up to half a day (4 hours).");
+    if (!f.date) return void toast.error("Pick a date");
     const starts_at = londonToIso(f.date, f.time);
-    if (!f.id && new Date(starts_at) < new Date()) return toast.error("Pick a date in the future");
+    if (!f.id && new Date(starts_at) < new Date()) return void toast.error("Pick a date in the future");
     setSaving(true);
     const [lat, lng] = CITY_CENTERS[f.city as City] ?? CITY_CENTERS.London;
     const row = {
@@ -69,7 +69,7 @@ function CharityTasks() {
     };
     const { error } = f.id ? await supabase.from("tasks").update(row).eq("id", f.id) : await supabase.from("tasks").insert(row);
     setSaving(false);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success(f.id ? "Task updated" : "Task posted — volunteers can book it now");
     setForm(null);
     qc.invalidateQueries({ queryKey: ["charity-tasks"] });
@@ -79,7 +79,7 @@ function CharityTasks() {
   const remove = async (id: string) => {
     if (!confirm("Cancel this task? Anyone booked will lose it from their list.")) return;
     const { error } = await supabase.from("tasks").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) return void toast.error(error.message);
     toast.success("Task removed");
     qc.invalidateQueries({ queryKey: ["charity-tasks"] });
     qc.invalidateQueries({ queryKey: ["tasks"] });
