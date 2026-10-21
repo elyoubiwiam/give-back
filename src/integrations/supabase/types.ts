@@ -14,6 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
+      charities: {
+        Row: {
+          active: boolean
+          causes: string[]
+          charity_number: string
+          city: string
+          contact_email: string
+          contact_phone: string
+          created_at: string
+          dbs_checks: boolean
+          description: string
+          doc_path: string | null
+          id: string
+          insurance: boolean
+          insurance_expiry: string | null
+          login_email: string | null
+          logo_url: string | null
+          name: string
+          owner_id: string | null
+          registered_address: string
+          regulator: string
+          safeguarding_lead: string
+          website: string
+        }
+        Insert: {
+          active?: boolean
+          causes?: string[]
+          charity_number?: string
+          city?: string
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string
+          dbs_checks?: boolean
+          description?: string
+          doc_path?: string | null
+          id?: string
+          insurance?: boolean
+          insurance_expiry?: string | null
+          login_email?: string | null
+          logo_url?: string | null
+          name: string
+          owner_id?: string | null
+          registered_address?: string
+          regulator?: string
+          safeguarding_lead?: string
+          website?: string
+        }
+        Update: {
+          active?: boolean
+          causes?: string[]
+          charity_number?: string
+          city?: string
+          contact_email?: string
+          contact_phone?: string
+          created_at?: string
+          dbs_checks?: boolean
+          description?: string
+          doc_path?: string | null
+          id?: string
+          insurance?: boolean
+          insurance_expiry?: string | null
+          login_email?: string | null
+          logo_url?: string | null
+          name?: string
+          owner_id?: string | null
+          registered_address?: string
+          regulator?: string
+          safeguarding_lead?: string
+          website?: string
+        }
+        Relationships: []
+      }
       city_baseline: {
         Row: {
           actions: number
@@ -34,6 +106,44 @@ export type Database = {
           volunteers?: number
         }
         Relationships: []
+      }
+      donations: {
+        Row: {
+          amount_pence: number
+          charity_id: string
+          created_at: string
+          giveback_pence: number
+          id: string
+          monthly: boolean
+          user_id: string | null
+        }
+        Insert: {
+          amount_pence: number
+          charity_id: string
+          created_at?: string
+          giveback_pence?: number
+          id?: string
+          monthly?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          amount_pence?: number
+          charity_id?: string
+          created_at?: string
+          giveback_pence?: number
+          id?: string
+          monthly?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_charity_id_fkey"
+            columns: ["charity_id"]
+            isOneToOne: false
+            referencedRelation: "charities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -74,6 +184,35 @@ export type Database = {
         }
         Relationships: []
       }
+      task_cancellations: {
+        Row: {
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_cancellations_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_signups: {
         Row: {
           created_at: string
@@ -106,7 +245,10 @@ export type Database = {
       tasks: {
         Row: {
           cause: string
+          charity_id: string | null
           city: string
+          created_at: string
+          description: string
           id: string
           lat: number
           lng: number
@@ -120,7 +262,10 @@ export type Database = {
         }
         Insert: {
           cause: string
+          charity_id?: string | null
           city: string
+          created_at?: string
+          description?: string
           id?: string
           lat: number
           lng: number
@@ -134,7 +279,10 @@ export type Database = {
         }
         Update: {
           cause?: string
+          charity_id?: string | null
           city?: string
+          created_at?: string
+          description?: string
           id?: string
           lat?: number
           lng?: number
@@ -146,6 +294,32 @@ export type Database = {
           title?: string
           when_label?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "tasks_charity_id_fkey"
+            columns: ["charity_id"]
+            isOneToOne: false
+            referencedRelation: "charities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
         Relationships: []
       }
     }
@@ -154,6 +328,16 @@ export type Database = {
     }
     Functions: {
       cancel_task: { Args: { _task_id: string }; Returns: number }
+      charity_activity: {
+        Args: never
+        Returns: {
+          created_at: string
+          kind: string
+          task_id: string
+          volunteer_id: string
+          volunteer_name: string
+        }[]
+      }
       city_stats: {
         Args: never
         Returns: {
@@ -163,10 +347,25 @@ export type Database = {
           volunteers: number
         }[]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       join_task: { Args: { _task_id: string }; Returns: number }
+      owns_charity: { Args: { _charity_id: string }; Returns: boolean }
+      task_booked_counts: {
+        Args: never
+        Returns: {
+          booked: number
+          task_id: string
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "charity"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -293,6 +492,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "charity"],
+    },
   },
 } as const

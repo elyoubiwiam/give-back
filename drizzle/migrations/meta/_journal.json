@@ -29,6 +29,13 @@
       "when": 1792404545273,
       "tag": "0003_cancel_task",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792614920121,
+      "tag": "0004_charity_side",
+      "breakpoints": true
     }
   ]
 }
