@@ -10,9 +10,9 @@ import { canRedeemWelcomeReward } from "@/lib/reward-rules";
 export const Route = createFileRoute("/_authenticated/rewards")({
   head: () => ({
     meta: [
-      { title: "Rewards — GiveBack" },
+      { title: "Rewards | GiveBack" },
       { name: "description", content: "Turn your volunteering points into discounts at partner cafés, shops and events." },
-      { property: "og:title", content: "Rewards — GiveBack" },
+      { property: "og:title", content: "Rewards | GiveBack" },
       { property: "og:description", content: "Points for good deeds, treats from local partners." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -53,7 +53,7 @@ function RewardsPage() {
         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-mustard text-primary-foreground"><Gift className="h-5 w-5" /></span>
         <div>
           <p className="font-semibold text-foreground">{freeReward ? "Welcome gift unlocked: pick 1 reward for free" : "Your first task unlocks 1 free reward"}</p>
-          <p className="text-sm text-muted-foreground">{freeReward ? "This welcome gift celebrates your first action on GiveBack — choose 1 reward worth 150 points or less, no points needed." : "Your first action on GiveBack unlocks 1 free partner reward worth 150 points or less."}</p>
+          <p className="text-sm text-muted-foreground">{freeReward ? "This welcome gift celebrates your first action on GiveBack. Choose 1 reward worth 150 points or less, no points needed." : "Your first action on GiveBack unlocks 1 free partner reward worth 150 points or less."}</p>
         </div>
       </div>
 

@@ -27,7 +27,7 @@ export function useJoinTask() {
       return false;
     }
     notifyTaskJoined({ data: { taskId: task.id } }).catch((e) => console.error(e));
-    if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first action earns a welcome gift — choose a reward worth 150 points or less in Rewards." });
+    if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first action earns a welcome gift. Choose a reward worth 150 points or less in Rewards." });
     await refresh();
     qc.invalidateQueries({ queryKey: ["city-stats"] });
     qc.invalidateQueries({ queryKey: ["booked-counts"] });
@@ -86,14 +86,13 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
         <div className="mt-3 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-secondary-foreground">
           <span className="font-semibold text-primary">Earn {task.points} pts</span> · {rewardEquivalent(task.points)}
         </div>
-        {!compact && (
-          <div className="mt-4">
-            <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full transition-all" style={{ width: `${spotsPct}%`, background: meta.color }} />
-            </div>
-            <p className="mt-1.5 text-xs text-muted-foreground">{spotsLeft} of {task.spots} spots left</p>
+        <div className="mt-4">
+          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+            <div className="h-full rounded-full transition-all" style={{ width: `${spotsPct}%`, background: meta.color }} />
           </div>
-        )}
+          <p className="mt-1.5 text-xs text-muted-foreground">{spotsLeft} of {task.spots} spots left</p>
+        </div>
+        {!compact && <TaskDetails task={task} />}
         <div className="mt-auto pt-5">
           <Button
             disabled={isJoined || joining || full}
@@ -128,6 +127,7 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           <p className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-primary" />{formatTaskWhen(task)} · UK time</p>
           <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" />{task.org}, {task.city}</p>
           <p className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" />{formatMinutes(task.minutes)}</p>
+          <DetailList task={task} />
           <p className="flex items-center gap-2 font-semibold"><Sparkles className="h-4 w-4 text-primary" />+{task.points} points</p>
         </div>
         <CalendarLinks task={task} />
@@ -170,5 +170,37 @@ function CalendarLinks({ task }: { task: Task }) {
       <a className={cls} href={outlookCalendarUrl(task)} target="_blank" rel="noreferrer">Outlook</a>
       <Button variant="outline" size="sm" className={cls} onClick={() => downloadIcs(task)}>Apple / other</Button>
     </div>
+  );
+}
+
+function detailRows(task: Task) {
+  return [
+    ["What it involves", task.description],
+    ["What to bring", task.what_to_bring],
+    ["Where to meet", task.meeting_point],
+    ["Good for", task.suitable_for],
+    ["Contact on the day", task.day_contact],
+  ].filter(([, v]) => v && v.trim()) as [string, string][];
+}
+
+function DetailList({ task }: { task: Task }) {
+  const rows = detailRows(task);
+  if (!rows.length) return null;
+  return (
+    <dl className="space-y-2">
+      {rows.map(([k, v]) => (
+        <div key={k}><dt className="text-xs font-semibold text-muted-foreground">{k}</dt><dd className="whitespace-pre-line break-words">{v}</dd></div>
+      ))}
+    </dl>
+  );
+}
+
+function TaskDetails({ task }: { task: Task }) {
+  if (!detailRows(task).length) return null;
+  return (
+    <details className="mt-3 rounded-2xl border border-border px-3 py-2 text-sm text-foreground">
+      <summary className="cursor-pointer text-xs font-semibold text-primary">More details</summary>
+      <div className="mt-2"><DetailList task={task} /></div>
+    </details>
   );
 }

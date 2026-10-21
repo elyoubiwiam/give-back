@@ -16,9 +16,9 @@ export const Route = createFileRoute("/auth")({
   }),
   head: () => ({
     meta: [
-      { title: "Create your free account — GiveBack" },
+      { title: "Create your free account | GiveBack" },
       { name: "description", content: "Create a free GiveBack account to get volunteering tasks tailored to the causes you care about." },
-      { property: "og:title", content: "Create your free account — GiveBack" },
+      { property: "og:title", content: "Create your free account | GiveBack" },
       { property: "og:description", content: "Tasks tailored to your causes and your time. Free, always." },
     ],
   }),
@@ -33,7 +33,7 @@ const BENEFITS = [
 ];
 
 const CHARITY_BENEFITS = [
-  { icon: CalendarPlus, text: "Post tasks — what's involved, when, and how many volunteers you need", color: "var(--teal)" },
+  { icon: CalendarPlus, text: "Post tasks: what's involved, when, and how many volunteers you need", color: "var(--teal)" },
   { icon: LayoutDashboard, text: "A dashboard of your bookings and the volunteers who came", color: "var(--coral)" },
   { icon: Clock, text: "Simple numbers and graphs to help volunteers come back", color: "var(--sky)" },
   { icon: HandCoins, text: "See donations you receive through GiveBack", color: "var(--mustard)" },
@@ -94,7 +94,7 @@ function AuthPage() {
   const isCharityView = isCharity;
   const badge = isCharityView ? "Charity partner" : "Free, always";
   const heading = isCharityView ? (
-    <>Welcome back — sign in to <span className="text-primary">your charity dashboard.</span></>
+    <>Welcome back. Sign in to <span className="text-primary">your charity dashboard.</span></>
   ) : (
     <>Create an account to get tasks <span className="text-primary">tailored to you.</span></>
   );

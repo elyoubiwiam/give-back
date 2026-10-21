@@ -11,9 +11,9 @@ import { JoinCTA } from "@/components/JoinCTA";
 export const Route = createFileRoute("/tasks")({
   head: () => ({
     meta: [
-      { title: "Find a task — GiveBack" },
+      { title: "Find a task | GiveBack" },
       { name: "description", content: "Browse micro-volunteering tasks by cause and time available in your UK city." },
-      { property: "og:title", content: "Find a task — GiveBack" },
+      { property: "og:title", content: "Find a task | GiveBack" },
       { property: "og:description", content: "Filter volunteering tasks by the causes you care about and the time you have." },
     ],
   }),
@@ -66,7 +66,7 @@ function TasksPage() {
           <Link to="/profile" className="text-primary underline underline-offset-4">Finish your profile</Link> to see tasks matched to you.
         </p>
       ) : (
-        <div className="mt-6"><JoinCTA compact title="See only the tasks that fit you — create a free account" /></div>
+        <div className="mt-6"><JoinCTA compact title="See only the tasks that fit you. Create a free account" /></div>
       )}
 
       <div className="mt-8 space-y-4 rounded-3xl border border-border bg-card p-5">
@@ -90,7 +90,7 @@ function TasksPage() {
         {results.map((t, i) => <Reveal key={t.id} delay={i * 60}><TaskCard task={t} /></Reveal>)}
       </div>
       {!isLoading && results.length === 0 && (
-        <div className="mt-4 rounded-3xl bg-secondary p-10 text-center text-muted-foreground">No tasks match yet — try more time or another cause.</div>
+        <div className="mt-4 rounded-3xl bg-secondary p-10 text-center text-muted-foreground">No tasks match yet. Try more time or another cause.</div>
       )}
     </div>
   );

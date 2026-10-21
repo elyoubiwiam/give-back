@@ -12,9 +12,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/charity/profile")({
   head: () => ({
     meta: [
-      { title: "Charity profile — GiveBack" },
+      { title: "Charity profile | GiveBack" },
       { name: "description", content: "Update your charity's name, logo, contact and legal details on GiveBack." },
-      { property: "og:title", content: "Charity profile — GiveBack" },
+      { property: "og:title", content: "Charity profile | GiveBack" },
       { property: "og:description", content: "Manage your charity's details." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -64,7 +64,7 @@ function CharityProfile() {
     const path = `${u.user!.id}/${Date.now()}-${file.name.replace(/[^\w.-]/g, "_")}`;
     const { error } = await supabase.storage.from("charity-docs").upload(path, file);
     if (error) return void toast.error(error.message);
-    set({ doc_path: path }); toast.success("Document uploaded — press Save");
+    set({ doc_path: path }); toast.success("Document uploaded. Press Save");
   };
 
   const input = "mt-1 w-full rounded-2xl border border-border bg-background px-4 py-2.5 text-foreground outline-none focus:border-primary";
@@ -114,7 +114,7 @@ function CharityProfile() {
           </label>
           {c.doc_path && <span className="flex items-center gap-1 text-sm text-foreground"><FileCheck className="h-4 w-4 text-primary" />{c.doc_path.split("/").pop()?.replace(/^\d+-/, "")}</span>}
         </div>
-        <p className="text-xs text-muted-foreground md:col-span-2">Documents are private — only your charity can see them.</p>
+        <p className="text-xs text-muted-foreground md:col-span-2">Documents are private. Only your charity can see them.</p>
       </section>
       <Button disabled={saving} className="rounded-full px-8">{saving ? "Saving…" : "Save profile"}</Button>
     </form>

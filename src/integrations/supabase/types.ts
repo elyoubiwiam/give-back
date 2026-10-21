@@ -248,16 +248,20 @@ export type Database = {
           charity_id: string | null
           city: string
           created_at: string
+          day_contact: string
           description: string
           id: string
           lat: number
           lng: number
+          meeting_point: string
           minutes: number
           org: string
           points: number
           spots: number
           starts_at: string | null
+          suitable_for: string
           title: string
+          what_to_bring: string
           when_label: string
         }
         Insert: {
@@ -265,16 +269,20 @@ export type Database = {
           charity_id?: string | null
           city: string
           created_at?: string
+          day_contact?: string
           description?: string
           id?: string
           lat: number
           lng: number
+          meeting_point?: string
           minutes: number
           org: string
           points: number
           spots: number
           starts_at?: string | null
+          suitable_for?: string
           title: string
+          what_to_bring?: string
           when_label: string
         }
         Update: {
@@ -282,16 +290,20 @@ export type Database = {
           charity_id?: string | null
           city?: string
           created_at?: string
+          day_contact?: string
           description?: string
           id?: string
           lat?: number
           lng?: number
+          meeting_point?: string
           minutes?: number
           org?: string
           points?: number
           spots?: number
           starts_at?: string | null
+          suitable_for?: string
           title?: string
+          what_to_bring?: string
           when_label?: string
         }
         Relationships: [

@@ -51,7 +51,7 @@ export const SKILLS = [
 ] as const;
 
 
-/** 1 point per minute volunteered — keeps tasks proportional to reward costs. */
+/** 1 point per minute volunteered, keeps tasks proportional to reward costs. */
 export const pointsForMinutes = (minutes: number) => minutes;
 
 /** Share of a reward a task earns, e.g. "Half a free flat white". */
@@ -83,6 +83,10 @@ export type Task = {
   starts_at?: string | null;
   charity_id?: string | null;
   description?: string;
+  what_to_bring?: string;
+  meeting_point?: string;
+  suitable_for?: string;
+  day_contact?: string;
   created_at?: string;
   charities?: { logo_url: string | null } | null;
   spots: number;
@@ -129,7 +133,7 @@ export function levelFor(points: number) {
 
 export const formatMinutes = (m: number) => (m < 60 ? `${m} min` : `${m / 60} h`);
 
-/** "Sat 20 Oct · 11:00" — exact day, month and time, always in UK local time. */
+/** "Sat 20 Oct · 11:00", exact day, month and time, always in UK local time. */
 export function formatTaskWhen(task: { starts_at?: string | null; when_label: string }) {
   if (!task.starts_at) return task.when_label;
   const d = new Date(task.starts_at);

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
-export function JoinCTA({ title = "Get tasks matched to your causes and your time — free", compact = false }: { title?: string; compact?: boolean }) {
+export function JoinCTA({ title = "Get tasks matched to your causes and your time. Free", compact = false }: { title?: string; compact?: boolean }) {
   const { user, loading } = useAuth();
   if (loading || user) return null;
   return (
