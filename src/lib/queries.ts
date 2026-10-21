@@ -39,3 +39,12 @@ export const cityStatsQuery = queryOptions({
     return [...data].sort((a, b) => b.hours - a.hours);
   },
 });
+
+export const strikesQuery = queryOptions({
+  queryKey: ["my-strikes"],
+  queryFn: async () => {
+    const { data, error } = await supabase.rpc("my_strikes");
+    if (error) throw error;
+    return data ?? 0;
+  },
+});
