@@ -19,6 +19,7 @@ export const bookedCountsQuery = queryOptions({
     if (error) throw error;
     return new Map(data.map((r) => [r.task_id, r.booked]));
   },
+  refetchInterval: 30000,
 });
 
 export const charitiesListQuery = queryOptions({

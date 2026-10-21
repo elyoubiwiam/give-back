@@ -83,6 +83,10 @@ export type Task = {
   starts_at?: string | null;
   charity_id?: string | null;
   description?: string;
+  what_to_bring?: string;
+  meeting_point?: string;
+  suitable_for?: string;
+  day_contact?: string;
   created_at?: string;
   charities?: { logo_url: string | null } | null;
   spots: number;

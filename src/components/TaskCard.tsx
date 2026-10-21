@@ -172,3 +172,35 @@ function CalendarLinks({ task }: { task: Task }) {
     </div>
   );
 }
+
+function detailRows(task: Task) {
+  return [
+    ["What it involves", task.description],
+    ["What to bring", task.what_to_bring],
+    ["Where to meet", task.meeting_point],
+    ["Good for", task.suitable_for],
+    ["Contact on the day", task.day_contact],
+  ].filter(([, v]) => v && v.trim()) as [string, string][];
+}
+
+function DetailList({ task }: { task: Task }) {
+  const rows = detailRows(task);
+  if (!rows.length) return null;
+  return (
+    <dl className="space-y-2">
+      {rows.map(([k, v]) => (
+        <div key={k}><dt className="text-xs font-semibold text-muted-foreground">{k}</dt><dd className="whitespace-pre-line break-words">{v}</dd></div>
+      ))}
+    </dl>
+  );
+}
+
+function TaskDetails({ task }: { task: Task }) {
+  if (!detailRows(task).length) return null;
+  return (
+    <details className="mt-3 rounded-2xl border border-border px-3 py-2 text-sm text-foreground">
+      <summary className="cursor-pointer text-xs font-semibold text-primary">More details</summary>
+      <div className="mt-2"><DetailList task={task} /></div>
+    </details>
+  );
+}
