@@ -17,8 +17,10 @@ import { Route as DonateRouteImport } from './routes/donate'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as AuthenticatedCharityRouteRouteImport } from './routes/_authenticated/charity/route'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
+import { Route as AuthenticatedCharityIndexRouteImport } from './routes/_authenticated/charity/index'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -60,6 +62,12 @@ const TasksRoute = TasksRouteImport.update({
   path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCharityRouteRoute =
+  AuthenticatedCharityRouteRouteImport.update({
+    id: '/charity',
+    path: '/charity',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -70,6 +78,12 @@ const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
   path: '/rewards',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCharityIndexRoute =
+  AuthenticatedCharityIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCharityRouteRoute,
+  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -85,8 +99,10 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof TasksRoute
+  '/charity': typeof AuthenticatedCharityRouteRouteWithChildren
   '/profile': typeof AuthenticatedProfileRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/charity/': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -99,6 +115,7 @@ export interface FileRoutesByTo {
   '/tasks': typeof TasksRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/charity': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -111,8 +128,10 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof TasksRoute
+  '/_authenticated/charity': typeof AuthenticatedCharityRouteRouteWithChildren
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/_authenticated/charity/': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -125,8 +144,10 @@ export interface FileRouteTypes {
     | '/map'
     | '/reset-password'
     | '/tasks'
+    | '/charity'
     | '/profile'
     | '/rewards'
+    | '/charity/'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -139,6 +160,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/profile'
     | '/rewards'
+    | '/charity'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -150,8 +172,10 @@ export interface FileRouteTypes {
     | '/map'
     | '/reset-password'
     | '/tasks'
+    | '/_authenticated/charity'
     | '/_authenticated/profile'
     | '/_authenticated/rewards'
+    | '/_authenticated/charity/'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -225,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/charity': {
+      id: '/_authenticated/charity'
+      path: '/charity'
+      fullPath: '/charity'
+      preLoaderRoute: typeof AuthenticatedCharityRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -239,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRewardsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/charity/': {
+      id: '/_authenticated/charity/'
+      path: '/'
+      fullPath: '/charity/'
+      preLoaderRoute: typeof AuthenticatedCharityIndexRouteImport
+      parentRoute: typeof AuthenticatedCharityRouteRoute
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -249,12 +287,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedCharityRouteRouteChildren {
+  AuthenticatedCharityIndexRoute: typeof AuthenticatedCharityIndexRoute
+}
+
+const AuthenticatedCharityRouteRouteChildren: AuthenticatedCharityRouteRouteChildren =
+  {
+    AuthenticatedCharityIndexRoute: AuthenticatedCharityIndexRoute,
+  }
+
+const AuthenticatedCharityRouteRouteWithChildren =
+  AuthenticatedCharityRouteRoute._addFileChildren(
+    AuthenticatedCharityRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCharityRouteRoute: typeof AuthenticatedCharityRouteRouteWithChildren
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCharityRouteRoute: AuthenticatedCharityRouteRouteWithChildren,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
 }
