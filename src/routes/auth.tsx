@@ -9,9 +9,10 @@ import { useAuth } from "@/lib/auth";
 type Mode = "signin" | "signup" | "forgot";
 
 export const Route = createFileRoute("/auth")({
-  validateSearch: (s: Record<string, unknown>): { mode?: Mode | undefined; note?: string | undefined } => ({
+  validateSearch: (s: Record<string, unknown>): { mode?: Mode | undefined; note?: string | undefined; as?: "charity" | undefined } => ({
     mode: s["mode"] === "signin" || s["mode"] === "forgot" ? s["mode"] : undefined,
     note: typeof s["note"] === "string" ? s["note"] : undefined,
+    as: s["as"] === "charity" ? "charity" : undefined,
   }),
   head: () => ({
     meta: [
@@ -102,6 +103,11 @@ function AuthPage() {
       </div>
 
       <div className="rounded-3xl border border-border bg-card p-7 shadow-[var(--shadow-soft)]">
+        {search.as === "charity" && mode === "signin" && (
+          <p className="mb-4 rounded-2xl bg-teal/15 px-4 py-3 text-sm text-foreground">
+            <span className="font-semibold">Charity partner sign-in.</span> Use the email and password GiveBack gave you to open your dashboard.
+          </p>
+        )}
         {search.note && mode === "signup" && (
           <p className="mb-4 rounded-2xl bg-mustard/20 px-4 py-3 text-sm text-foreground">{search.note}</p>
         )}
