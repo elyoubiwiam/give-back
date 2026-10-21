@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Clock, Gift, Heart } from "lucide-react";
+import { Clock, Gift, Heart, LayoutDashboard, CalendarPlus, HandCoins } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/lib/auth";
@@ -30,6 +30,13 @@ const BENEFITS = [
   { icon: Heart, text: "Tasks tailored to the causes you care about", color: "var(--coral)" },
   { icon: Clock, text: "Only tasks that fit the time you have", color: "var(--teal)" },
   { icon: Gift, text: "Earn points for local rewards", color: "var(--mustard)" },
+];
+
+const CHARITY_BENEFITS = [
+  { icon: CalendarPlus, text: "Post tasks — what's involved, when, and how many volunteers you need", color: "var(--teal)" },
+  { icon: LayoutDashboard, text: "A dashboard of your bookings and the volunteers who came", color: "var(--coral)" },
+  { icon: Clock, text: "Simple numbers and graphs to help volunteers come back", color: "var(--sky)" },
+  { icon: HandCoins, text: "See donations you receive through GiveBack", color: "var(--mustard)" },
 ];
 
 function AuthPage() {
