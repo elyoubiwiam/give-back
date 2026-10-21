@@ -6,6 +6,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { CAUSES, CITIES, CITY_CENTERS, causeMeta, formatMinutes, formatTaskWhen, type City } from "@/lib/data";
 import { TASK_DURATIONS, isValidTaskMinutes, taskPhase } from "@/lib/charity-stats";
+import { bookedCountsQuery } from "@/lib/queries";
 import { myCharityQuery, myCharityTasksQuery } from "@/lib/charity";
 import { Button } from "@/components/ui/button";
 
@@ -166,7 +167,7 @@ function CharityTasks() {
           </div>
           <p className="mt-2 text-xs text-muted-foreground">Volunteers earn {f.minutes} points (1 per minute).</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button disabled={saving} className="rounded-full">{saving ? "Saving…" : f.id ? "Save changes" : "Post task"}</Button>
           {f.id && <Button type="button" variant="outline" className="rounded-full" onClick={() => setForm(null)}>Cancel edit</Button>}
         </div>
@@ -178,15 +179,15 @@ function CharityTasks() {
           {tasks.length === 0 && <p className="text-muted-foreground">No tasks yet.</p>}
           {tasks.map((t) => (
             <div key={t.id} className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-card px-4 py-3">
-              <div className="flex items-center gap-3">
-                <span className="h-8 w-1.5 rounded-full" style={{ background: causeMeta(t.cause).color }} />
-                <div>
-                  <p className="font-medium text-foreground">{t.title}</p>
-                  <p className="text-xs text-muted-foreground">{formatTaskWhen(t)} · {formatMinutes(t.minutes)} · {t.spots} needed · {taskPhase(t) === "past" ? "Past" : taskPhase(t) === "ongoing" ? "Today" : "Upcoming"}</p>
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="h-8 w-1.5 shrink-0 rounded-full" style={{ background: causeMeta(t.cause).color }} />
+                <div className="min-w-0">
+                  <p className="break-words font-medium text-foreground">{t.title}</p>
+                  <p className="text-xs text-muted-foreground">{formatTaskWhen(t)} · {formatMinutes(t.minutes)} · {counts?.get(t.id) ?? 0} / {t.spots} booked · {taskPhase(t) === "past" ? "Past" : taskPhase(t) === "ongoing" ? "Today" : "Upcoming"}</p>
                 </div>
               </div>
-              <div className="flex gap-1">
-                <button title="Edit" onClick={() => { const l = isoToLondon(t.starts_at); setForm({ id: t.id, title: t.title, description: t.description, cause: t.cause, city: t.city, spots: t.spots, minutes: t.minutes, ...l }); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-secondary"><Pencil className="h-4 w-4" /></button>
+              <div className="flex shrink-0 gap-1">
+                <button title="Edit" onClick={() => { const l = isoToLondon(t.starts_at); setForm({ id: t.id, title: t.title, description: t.description ?? "", what_to_bring: t.what_to_bring ?? "", meeting_point: t.meeting_point ?? "", suitable_for: t.suitable_for ?? "", day_contact: t.day_contact ?? "", cause: t.cause, city: t.city, spots: t.spots, minutes: t.minutes, ...l }); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="grid h-8 w-8 place-items-center rounded-full hover:bg-secondary"><Pencil className="h-4 w-4" /></button>
                 <button title="Remove" onClick={() => remove(t.id)} className="grid h-8 w-8 place-items-center rounded-full text-destructive hover:bg-secondary"><Trash2 className="h-4 w-4" /></button>
               </div>
             </div>
