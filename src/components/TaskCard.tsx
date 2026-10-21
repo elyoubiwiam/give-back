@@ -86,14 +86,13 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
         <div className="mt-3 rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-secondary-foreground">
           <span className="font-semibold text-primary">Earn {task.points} pts</span> · {rewardEquivalent(task.points)}
         </div>
-        {!compact && (
-          <div className="mt-4">
-            <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-              <div className="h-full rounded-full transition-all" style={{ width: `${spotsPct}%`, background: meta.color }} />
-            </div>
-            <p className="mt-1.5 text-xs text-muted-foreground">{spotsLeft} of {task.spots} spots left</p>
+        <div className="mt-4">
+          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+            <div className="h-full rounded-full transition-all" style={{ width: `${spotsPct}%`, background: meta.color }} />
           </div>
-        )}
+          <p className="mt-1.5 text-xs text-muted-foreground">{spotsLeft} of {task.spots} spots left</p>
+        </div>
+        {!compact && <TaskDetails task={task} />}
         <div className="mt-auto pt-5">
           <Button
             disabled={isJoined || joining || full}
@@ -128,6 +127,7 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           <p className="flex items-center gap-2"><CalendarDays className="h-4 w-4 text-primary" />{formatTaskWhen(task)} · UK time</p>
           <p className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" />{task.org}, {task.city}</p>
           <p className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" />{formatMinutes(task.minutes)}</p>
+          <DetailList task={task} />
           <p className="flex items-center gap-2 font-semibold"><Sparkles className="h-4 w-4 text-primary" />+{task.points} points</p>
         </div>
         <CalendarLinks task={task} />
