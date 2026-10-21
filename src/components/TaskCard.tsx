@@ -130,28 +130,39 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           <DetailList task={task} />
           <p className="flex items-center gap-2 font-semibold"><Sparkles className="h-4 w-4 text-primary" />+{task.points} points</p>
         </div>
+        <p className="rounded-2xl bg-secondary/60 px-3 py-2 text-xs text-secondary-foreground">{RELIANCE_NOTE}</p>
         <CalendarLinks task={task} />
         <Button onClick={() => setConfirmationOpen(false)} className="mt-2">Done</Button>
       </DialogContent>
     </Dialog>
     <Dialog open={cancelOpen} onOpenChange={(open) => { if (!cancelling) setCancelOpen(open); }}>
-      <DialogContent className="w-[calc(100%-2rem)] rounded-lg bg-card duration-300 motion-reduce:animate-none">
+      <DialogContent className="max-h-[90dvh] w-[calc(100%-2rem)] overflow-y-auto rounded-lg bg-card duration-300 motion-reduce:animate-none">
         <DialogHeader>
           <DialogTitle className="pr-6 text-xl leading-snug">Cancel this task?</DialogTitle>
-          <DialogDescription>{task.title} · {formatTaskWhen(task)}. Cancelling removes the {task.points} points from this booking. If you added it to your calendar, remove it there too.</DialogDescription>
+          <DialogDescription>{task.title} · {formatTaskWhen(task)}. It's okay if something came up. Just tell {task.org} why, so they can plan.</DialogDescription>
         </DialogHeader>
+        <label className="block text-sm font-medium text-foreground">Reason
+          <textarea rows={3} maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="e.g. I'm unwell and can't make it"
+            className="mt-1 block w-full min-w-0 resize-y rounded-2xl border border-border bg-background px-4 py-2.5 text-base outline-none focus:border-primary" />
+        </label>
+        <ul className="list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+          <li>The charity reviews your reason. A rejected reason is a strike.</li>
+          <li>You have {strikesLeft(strikes)} of {MAX_STRIKES} strikes left.</li>
+          <li>The {task.points} points from this booking are removed. Remove it from your calendar too.</li>
+        </ul>
         <div className="flex flex-wrap justify-end gap-3">
           <Button variant="outline" disabled={cancelling} onClick={() => setCancelOpen(false)}>Keep booking</Button>
-          <Button disabled={cancelling} onClick={async () => {
+          <Button disabled={cancelling || !isValidCancelReason(reason)} onClick={async () => {
             setCancelling(true);
             try {
-              const { error } = await supabase.rpc("cancel_task", { _task_id: task.id });
+              const { error } = await supabase.rpc("cancel_task", { _task_id: task.id, _reason: reason.trim() });
               if (error) { toast.error(error.message); return; }
               await refresh();
               await qc.invalidateQueries({ queryKey: ["city-stats"] });
               await qc.invalidateQueries({ queryKey: ["booked-counts"] });
               setCancelOpen(false);
-              toast.success("Task cancelled");
+              setReason("");
+              toast.success("Task cancelled", { description: "Thanks for letting us know. The charity will review your reason." });
             } finally { setCancelling(false); }
           }}>{cancelling ? "Cancelling…" : "Cancel booking"}</Button>
         </div>

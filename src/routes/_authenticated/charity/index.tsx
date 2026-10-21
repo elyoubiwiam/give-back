@@ -6,6 +6,7 @@ import { Clock, HandCoins, Lightbulb, Repeat, Timer, Users, UserX, Gauge } from 
 import { avgHoursToFill, computeKpis, taskPhase, type TaskPhase } from "@/lib/charity-stats";
 import { charityActivityQuery, charityDonationsQuery, myCharityQuery, myCharityTasksQuery } from "@/lib/charity";
 import { causeMeta, formatMinutes, formatTaskWhen } from "@/lib/data";
+import { CancellationReviews } from "@/components/CancellationReviews";
 
 export const Route = createFileRoute("/_authenticated/charity/")({
   head: () => ({
@@ -116,6 +117,8 @@ function Dashboard() {
         <h2 className="flex items-center gap-2 font-semibold text-foreground"><Lightbulb className="h-4 w-4 text-primary" /> Tips to bring volunteers back</h2>
         <ul className="mt-2 list-disc space-y-1 pl-6 text-sm text-foreground">{tips.map((t) => <li key={t}>{t}</li>)}</ul>
       </div>
+
+      <CancellationReviews />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Chart title="Volunteers per week (new vs returning)">
