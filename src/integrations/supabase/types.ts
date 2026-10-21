@@ -188,18 +188,27 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          reason: string
+          reviewed_at: string | null
+          status: string
           task_id: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
+          reason?: string
+          reviewed_at?: string | null
+          status?: string
           task_id: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
+          reason?: string
+          reviewed_at?: string | null
+          status?: string
           task_id?: string
           user_id?: string
         }
@@ -339,7 +348,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      cancel_task: { Args: { _task_id: string }; Returns: number }
+      cancel_task: {
+        Args: { _reason: string; _task_id: string }
+        Returns: number
+      }
       charity_activity: {
         Args: never
         Returns: {
@@ -347,6 +359,18 @@ export type Database = {
           kind: string
           task_id: string
           volunteer_id: string
+          volunteer_name: string
+        }[]
+      }
+      charity_cancellations: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          reason: string
+          status: string
+          task_id: string
+          task_title: string
           volunteer_name: string
         }[]
       }
@@ -367,7 +391,12 @@ export type Database = {
         Returns: boolean
       }
       join_task: { Args: { _task_id: string }; Returns: number }
+      my_strikes: { Args: never; Returns: number }
       owns_charity: { Args: { _charity_id: string }; Returns: boolean }
+      review_cancellation: {
+        Args: { _approve: boolean; _id: string }
+        Returns: undefined
+      }
       task_booked_counts: {
         Args: never
         Returns: {
