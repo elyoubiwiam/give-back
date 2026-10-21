@@ -4,12 +4,8 @@ import { TIME_SLOTS } from "./data";
 export const MAX_TASK_MINUTES = TIME_SLOTS[TIME_SLOTS.length - 1]!.max;
 
 /** Duration choices grouped by the same time slots volunteers filter by. */
-export const TASK_DURATIONS = TIME_SLOTS.map((slot, i) => {
-  const min = i === 0 ? 5 : TIME_SLOTS[i - 1]!.max + 15;
-  const options: number[] = [];
-  for (let m = i === 0 ? 15 : min; m <= slot.max; m += i < 2 ? 15 : 30) options.push(m);
-  return { ...slot, options };
-});
+const SLOT_OPTIONS = [[15, 30], [45, 60], [90, 120], [180, 240]];
+export const TASK_DURATIONS = TIME_SLOTS.map((slot, i) => ({ ...slot, options: SLOT_OPTIONS[i] ?? [slot.max] }));
 
 export const isValidTaskMinutes = (m: number) => Number.isInteger(m) && m >= 5 && m <= MAX_TASK_MINUTES;
 
