@@ -63,6 +63,11 @@ function Index() {
             <Link to="/tasks" className={`inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium transition hover:scale-105 ${user ? "bg-primary text-primary-foreground" : "bg-card text-foreground border border-border"}`}>
               Find a task {user && <ArrowRight className="h-4 w-4" />}
             </Link>
+            {!user && (
+              <Link to="/auth" search={{ mode: "signin", as: "charity" }} className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium text-foreground underline-offset-4 transition hover:bg-secondary hover:scale-105">
+                I'm a charity
+              </Link>
+            )}
           </div>
           {!user && <p className="mt-3 text-sm text-muted-foreground">Free account = tasks tailored to the causes you care about.</p>}
         </div>
