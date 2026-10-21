@@ -91,15 +91,22 @@ function AuthPage() {
 
   const input = "w-full rounded-2xl border border-border bg-card px-4 py-3 outline-none transition focus:border-primary";
 
+  const isCharityView = isCharity;
+  const badge = isCharityView ? "Charity partner" : "Free, always";
+  const heading = isCharityView ? (
+    <>Welcome back — sign in to <span className="text-primary">your charity dashboard.</span></>
+  ) : (
+    <>Create an account to get tasks <span className="text-primary">tailored to you.</span></>
+  );
+  const benefits = isCharityView ? CHARITY_BENEFITS : BENEFITS;
+
   return (
     <div className="mx-auto grid max-w-5xl gap-10 px-5 py-14 md:grid-cols-2 md:items-center">
       <div>
-        <span className="inline-flex rounded-full bg-sage/25 px-3 py-1 text-sm font-medium text-foreground">Free, always</span>
-        <h1 className="mt-4 text-4xl font-bold leading-tight text-foreground md:text-5xl">
-          Create an account to get tasks <span className="text-primary">tailored to you.</span>
-        </h1>
+        <span className="inline-flex rounded-full bg-teal/20 px-3 py-1 text-sm font-medium text-foreground">{badge}</span>
+        <h1 className="mt-4 text-4xl font-bold leading-tight text-foreground md:text-5xl">{heading}</h1>
         <ul className="mt-8 space-y-4">
-          {BENEFITS.map((b) => (
+          {benefits.map((b) => (
             <li key={b.text} className="flex items-center gap-4">
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-primary-foreground" style={{ background: b.color }}>
                 <b.icon className="h-5 w-5" />
