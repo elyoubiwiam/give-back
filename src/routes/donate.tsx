@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { charitiesListQuery } from "@/lib/queries";
+import { useAuth } from "@/lib/auth";
 import { Lock } from "lucide-react";
 import { toast } from "sonner";
 
@@ -15,12 +19,15 @@ export const Route = createFileRoute("/donate")({
   component: DonatePage,
 });
 
-const CHARITIES = ["Hackney Food Bank", "Mustard Tree", "Age Together", "Bristol Green", "Streetwise Edinburgh"];
 const AMOUNTS = [5, 10, 25, 50];
 
 function DonatePage() {
   const [amount, setAmount] = useState(10);
-  const [charity, setCharity] = useState(CHARITIES[0]);
+  const { data: charities = [] } = useQuery(charitiesListQuery);
+  const { user } = useAuth();
+  const [charity, setCharity] = useState("");
+  useEffect(() => { if (!charity && charities.length) setCharity((charities.find((c) => c.name === "Hackney Food Bank") ?? charities[0]!).id); }, [charities, charity]);
+  const [busy, setBusy] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [tip, setTip] = useState(false);
   const [tipAmount, setTipAmount] = useState(2);
@@ -37,7 +44,7 @@ function DonatePage() {
         <div>
           <label className="text-sm font-medium text-foreground">Support</label>
           <select value={charity} onChange={(e) => setCharity(e.target.value)} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3">
-            {CHARITIES.map((c) => <option key={c}>{c}</option>)}
+            {charities.map((c) => <option key={c.id} value={c.id}>{c.name} · {c.city}</option>)}
           </select>
         </div>
         <div>
@@ -81,7 +88,14 @@ function DonatePage() {
           )}
         </div>
         <button
-          onClick={() => toast("Donations open soon", { description: "Secure card payments are being set up." })}
+          disabled={busy || !charity}
+          onClick={async () => {
+            setBusy(true);
+            const { error } = await supabase.from("donations").insert({ charity_id: charity, user_id: user?.id ?? null, amount_pence: Math.round(amount * 100), giveback_pence: tip ? Math.round(tipAmount * 100) : 0, monthly });
+            setBusy(false);
+            if (error) return void toast.error(error.message);
+            toast("Thank you — your pledge is saved", { description: "Secure card payments are being set up; we'll let the charity know." });
+          }}
           className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 font-medium text-primary-foreground hover:opacity-90"
         >
           <Lock className="h-4 w-4" /> Donate £{amount}{tip ? ` + £${tipAmount} to GiveBack` : ""}{monthly ? "/month" : ""}

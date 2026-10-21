@@ -81,6 +81,10 @@ export type Task = {
   points: number;
   when_label: string;
   starts_at?: string | null;
+  charity_id?: string | null;
+  description?: string;
+  created_at?: string;
+  charities?: { logo_url: string | null } | null;
   spots: number;
   lat: number;
   lng: number;

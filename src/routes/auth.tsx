@@ -38,13 +38,15 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
-  const { user, profile } = useAuth();
+  const { user, profile, roles, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user || !profile) return;
+    if (!user || loading) return;
+    if (roles.has("charity")) return void navigate({ to: "/charity" });
+    if (!profile) return;
     navigate({ to: profile.onboarded ? "/tasks" : "/profile" });
-  }, [user, profile, navigate]);
+  }, [user, profile, roles, loading, navigate]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

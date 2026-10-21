@@ -13,7 +13,8 @@ const NAV = [
 ] as const;
 
 export function SiteHeader() {
-  const { user, profile } = useAuth();
+  const { user, profile, roles } = useAuth();
+  const isCharity = roles.has("charity");
   const navigate = useNavigate();
   const qc = useQueryClient();
 
@@ -39,8 +40,14 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        {user ? (
+        {user && isCharity ? (
           <div className="flex items-center gap-2">
+            <Link to="/charity" className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Charity dashboard</Link>
+            <button onClick={signOut} className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-secondary" title="Sign out"><LogOut className="h-4 w-4" /></button>
+          </div>
+        ) : user ? (
+          <div className="flex items-center gap-2">
+            {roles.has("admin") && <Link to="/admin/charities" className="hidden rounded-full border border-border px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground sm:inline">Charities</Link>}
             <Link to="/rewards" className="hidden items-center gap-1 rounded-full bg-mustard/20 px-3 py-1.5 text-sm font-semibold text-foreground sm:flex">
               <Sparkles className="h-3.5 w-3.5 text-primary" /> {profile?.points ?? 0}
             </Link>
