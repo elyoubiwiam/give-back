@@ -27,8 +27,9 @@ export const Route = createFileRoute("/_authenticated/charity/tasks")({
 function londonToIso(date: string, time: string) {
   const guess = new Date(`${date}T${time}:00Z`);
   const parts = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", hour: "2-digit", hourCycle: "h23" }).format(guess);
-  const offsetH = Number(parts) - guess.getUTCHours();
-  return new Date(guess.getTime() - (((offsetH + 24) % 24) > 12 ? offsetH : offsetH) * 36e5).toISOString();
+  let offsetH = (Number(parts) - guess.getUTCHours() + 24) % 24;
+  if (offsetH > 12) offsetH -= 24;
+  return new Date(guess.getTime() - offsetH * 36e5).toISOString();
 }
 function isoToLondon(iso: string | null) {
   if (!iso) return { date: "", time: "10:00" };

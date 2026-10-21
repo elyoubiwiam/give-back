@@ -21,6 +21,7 @@ import { Route as AuthenticatedCharityRouteRouteImport } from './routes/_authent
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
 import { Route as AuthenticatedCharityIndexRouteImport } from './routes/_authenticated/charity/index'
+import { Route as AuthenticatedCharityTasksRouteImport } from './routes/_authenticated/charity/tasks'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -84,6 +85,12 @@ const AuthenticatedCharityIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedCharityRouteRoute,
   } as any)
+const AuthenticatedCharityTasksRoute =
+  AuthenticatedCharityTasksRouteImport.update({
+    id: '/tasks',
+    path: '/tasks',
+    getParentRoute: () => AuthenticatedCharityRouteRoute,
+  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -102,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/charity': typeof AuthenticatedCharityRouteRouteWithChildren
   '/profile': typeof AuthenticatedProfileRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/charity/tasks': typeof AuthenticatedCharityTasksRoute
   '/charity/': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/tasks': typeof TasksRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/charity/tasks': typeof AuthenticatedCharityTasksRoute
   '/charity': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/_authenticated/charity': typeof AuthenticatedCharityRouteRouteWithChildren
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/_authenticated/charity/tasks': typeof AuthenticatedCharityTasksRoute
   '/_authenticated/charity/': typeof AuthenticatedCharityIndexRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/charity'
     | '/profile'
     | '/rewards'
+    | '/charity/tasks'
     | '/charity/'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
@@ -160,6 +171,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/profile'
     | '/rewards'
+    | '/charity/tasks'
     | '/charity'
     | '/lovable/email/transactional/preview'
   id:
@@ -175,6 +187,7 @@ export interface FileRouteTypes {
     | '/_authenticated/charity'
     | '/_authenticated/profile'
     | '/_authenticated/rewards'
+    | '/_authenticated/charity/tasks'
     | '/_authenticated/charity/'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
@@ -277,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCharityIndexRouteImport
       parentRoute: typeof AuthenticatedCharityRouteRoute
     }
+    '/_authenticated/charity/tasks': {
+      id: '/_authenticated/charity/tasks'
+      path: '/tasks'
+      fullPath: '/charity/tasks'
+      preLoaderRoute: typeof AuthenticatedCharityTasksRouteImport
+      parentRoute: typeof AuthenticatedCharityRouteRoute
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -288,11 +308,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedCharityRouteRouteChildren {
+  AuthenticatedCharityTasksRoute: typeof AuthenticatedCharityTasksRoute
   AuthenticatedCharityIndexRoute: typeof AuthenticatedCharityIndexRoute
 }
 
 const AuthenticatedCharityRouteRouteChildren: AuthenticatedCharityRouteRouteChildren =
   {
+    AuthenticatedCharityTasksRoute: AuthenticatedCharityTasksRoute,
     AuthenticatedCharityIndexRoute: AuthenticatedCharityIndexRoute,
   }
 
