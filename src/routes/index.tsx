@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, HeartHandshake } from "lucide-react";
 import { CITIES, RECENT_ACTIONS, causeMeta, type City } from "@/lib/data";
 import { cityStatsQuery, tasksQuery } from "@/lib/queries";
 import { TaskCard } from "@/components/TaskCard";
@@ -54,18 +54,13 @@ function Index() {
               <button key={c} onClick={() => setCity(c)} className={`rounded-full px-4 py-2 text-sm font-medium transition-all active:scale-95 ${city === c ? "bg-foreground text-background" : "bg-card text-foreground hover:bg-secondary"}`}>{c}</button>
             ))}
           </div>
-          <div className="mt-6 flex flex-wrap gap-3">
-            {!user && (
-              <Link to="/auth" className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-medium text-primary-foreground transition hover:scale-105">
-                Create your free account <ArrowRight className="h-4 w-4" />
-              </Link>
-            )}
-            <Link to="/tasks" className={`inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium transition hover:scale-105 ${user ? "bg-primary text-primary-foreground" : "bg-card text-foreground border border-border"}`}>
-              Find a task {user && <ArrowRight className="h-4 w-4" />}
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link to="/tasks" className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-lg font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition hover:scale-105">
+              Find a task <ArrowRight className="h-5 w-5" />
             </Link>
             {!user && (
-              <Link to="/auth" search={{ mode: "signin", as: "charity" }} className="inline-flex items-center gap-2 rounded-full px-6 py-3 font-medium text-foreground underline-offset-4 transition hover:bg-secondary hover:scale-105">
-                I'm a charity
+              <Link to="/auth" search={{ mode: "signin", as: "charity" }} className="inline-flex items-center gap-2 rounded-full bg-teal px-7 py-3.5 text-lg font-semibold text-primary-foreground shadow-[var(--shadow-soft)] transition hover:scale-105">
+                <HeartHandshake className="h-5 w-5" /> I'm a charity
               </Link>
             )}
           </div>
@@ -131,10 +126,6 @@ function Index() {
       </section>
 
       <section className="mx-auto max-w-6xl px-5 pb-10">
-        <JoinCTA />
-      </section>
-
-      <section className="mx-auto max-w-6xl px-5 pb-20">
         <div className="grid gap-4 md:grid-cols-3">
           {[
             ["Pick a task", "Filtered by the causes you love and the time you have.", "var(--teal)"],
@@ -150,6 +141,10 @@ function Index() {
             </Reveal>
           ))}
         </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 pb-20">
+        <JoinCTA />
       </section>
     </div>
   );
