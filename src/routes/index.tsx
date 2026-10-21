@@ -13,9 +13,9 @@ import { useAuth } from "@/lib/auth";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "GiveBack — Small tasks, big kindness" },
+      { title: "GiveBack | Small tasks, big kindness" },
       { name: "description", content: "Lend a hand to local UK charities with quick micro-volunteering tasks, earn points and unlock rewards." },
-      { property: "og:title", content: "GiveBack — Small tasks, big kindness" },
+      { property: "og:title", content: "GiveBack | Small tasks, big kindness" },
       { property: "og:description", content: "Quick volunteering tasks for local UK charities. Earn points, unlock local rewards." },
     ],
   }),
