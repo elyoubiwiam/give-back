@@ -10,9 +10,9 @@ import { causeMeta, formatMinutes, formatTaskWhen } from "@/lib/data";
 export const Route = createFileRoute("/_authenticated/charity/")({
   head: () => ({
     meta: [
-      { title: "Charity dashboard — GiveBack" },
+      { title: "Charity dashboard | GiveBack" },
       { name: "description", content: "See your volunteers, returning helpers, hours given and donations on GiveBack." },
-      { property: "og:title", content: "Charity dashboard — GiveBack" },
+      { property: "og:title", content: "Charity dashboard | GiveBack" },
       { property: "og:description", content: "Your volunteering and donation results at a glance." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -68,14 +68,14 @@ function Dashboard() {
 
   const tips: string[] = [];
   const bestDay = [...byDay].sort((a, b) => b.Bookings - a.Bookings)[0];
-  if (bestDay && bestDay.Bookings > 0) tips.push(`${bestDay.day} tasks get the most bookings — post your next one then.`);
-  if (k.oneTimers > 0) tips.push(`${k.oneTimers} volunteer${k.oneTimers > 1 ? "s" : ""} came once — post a similar task soon to bring them back.`);
-  if (k.fillPct < 50 && tasks.length) tips.push("Under half your spots are filled — shorter tasks (under 1 hour) tend to fill faster.");
-  if (k.cancelPct > 20) tips.push("Cancellations are high — a clear description of what to expect helps people commit.");
+  if (bestDay && bestDay.Bookings > 0) tips.push(`${bestDay.day} tasks get the most bookings. Post your next one then.`);
+  if (k.oneTimers > 0) tips.push(`${k.oneTimers} volunteer${k.oneTimers > 1 ? "s" : ""} came once. Post a similar task soon to bring them back.`);
+  if (k.fillPct < 50 && tasks.length) tips.push("Under half your spots are filled. Shorter tasks (under 1 hour) tend to fill faster.");
+  if (k.cancelPct > 20) tips.push("Cancellations are high. A clear description of what to expect helps people commit.");
   if (!tips.length) tips.push("Post your first task to start seeing volunteers here.");
 
   if (isLoading) return <p className="text-muted-foreground">Loading…</p>;
-  if (!charity) return <p className="text-muted-foreground">Your charity account isn't linked yet — contact GiveBack.</p>;
+  if (!charity) return <p className="text-muted-foreground">Your charity account isn't linked yet. Contact GiveBack.</p>;
 
   const listed = tasks.filter((t) => taskPhase(t) === tab);
   const kpis = [
@@ -84,7 +84,7 @@ function Dashboard() {
     { label: "Hours given", value: k.hours, icon: Clock, color: "var(--sage)" },
     { label: "Fill rate", value: `${k.fillPct}%`, icon: Gauge, color: "var(--sky)" },
     { label: "Cancellation rate", value: `${k.cancelPct}%`, icon: UserX, color: "var(--coral)" },
-    { label: "Avg time to fill", value: fillHours === null ? "—" : `${fillHours} h`, icon: Timer, color: "var(--plum)" },
+    { label: "Avg time to fill", value: fillHours === null ? "None yet" : `${fillHours} h`, icon: Timer, color: "var(--plum)" },
     { label: "Donations via GiveBack", value: `£${donated.toLocaleString("en-GB")}`, icon: HandCoins, color: "var(--mustard)", hint: `${donors} donor${donors === 1 ? "" : "s"} · pledged` },
   ];
 

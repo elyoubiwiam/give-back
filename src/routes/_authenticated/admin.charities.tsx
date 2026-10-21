@@ -15,9 +15,9 @@ export const Route = createFileRoute("/_authenticated/admin/charities")({
   },
   head: () => ({
     meta: [
-      { title: "Manage charities — GiveBack admin" },
+      { title: "Manage charities | GiveBack admin" },
       { name: "description", content: "Create and manage charity logins for GiveBack." },
-      { property: "og:title", content: "Manage charities — GiveBack admin" },
+      { property: "og:title", content: "Manage charities | GiveBack admin" },
       { property: "og:description", content: "Create and manage charity logins." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

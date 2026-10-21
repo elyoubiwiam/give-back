@@ -27,7 +27,7 @@ export function useJoinTask() {
       return false;
     }
     notifyTaskJoined({ data: { taskId: task.id } }).catch((e) => console.error(e));
-    if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first action earns a welcome gift — choose a reward worth 150 points or less in Rewards." });
+    if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first action earns a welcome gift. Choose a reward worth 150 points or less in Rewards." });
     await refresh();
     qc.invalidateQueries({ queryKey: ["city-stats"] });
     qc.invalidateQueries({ queryKey: ["booked-counts"] });

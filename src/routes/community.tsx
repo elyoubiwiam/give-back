@@ -10,9 +10,9 @@ import { JoinCTA } from "@/components/JoinCTA";
 export const Route = createFileRoute("/community")({
   head: () => ({
     meta: [
-      { title: "City ranking — GiveBack" },
+      { title: "City ranking | GiveBack" },
       { name: "description", content: "See which UK cities are giving back the most, with the latest good deeds from each community." },
-      { property: "og:title", content: "City ranking — GiveBack" },
+      { property: "og:title", content: "City ranking | GiveBack" },
       { property: "og:description", content: "How UK cities are giving back this month." },
     ],
   }),
@@ -53,7 +53,7 @@ function CommunityPage() {
   return (
     <div className="mx-auto max-w-6xl px-5 py-12">
       <h1 className="text-4xl font-bold text-foreground md:text-5xl">How cities are giving back</h1>
-      <p className="mt-2 max-w-xl text-muted-foreground">No leaderboards of people — just communities showing up for each other this month.</p>
+      <p className="mt-2 max-w-xl text-muted-foreground">No leaderboards of people. Just communities showing up for each other this month.</p>
 
       <div className="mt-6 inline-flex rounded-full bg-secondary p-1">
         {METRICS.map((m) => (
@@ -134,7 +134,7 @@ function CommunityPage() {
           </ul>
         </div>
       </div>
-      <div className="mt-12"><JoinCTA compact title="Help your city climb the ranking — join free" /></div>
+      <div className="mt-12"><JoinCTA compact title="Help your city climb the ranking. Join free" /></div>
     </div>
   );
 }

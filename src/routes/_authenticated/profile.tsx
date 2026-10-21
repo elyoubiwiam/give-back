@@ -12,9 +12,9 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
-      { title: "Your profile — GiveBack" },
+      { title: "Your profile | GiveBack" },
       { name: "description", content: "Tell us the causes you care about, how you can help and how much time you have." },
-      { property: "og:title", content: "Your profile — GiveBack" },
+      { property: "og:title", content: "Your profile | GiveBack" },
       { property: "og:description", content: "Set your causes, skills and time to get matched to tasks." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

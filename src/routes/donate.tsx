@@ -10,9 +10,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/donate")({
   head: () => ({
     meta: [
-      { title: "Donate — GiveBack" },
+      { title: "Donate | GiveBack" },
       { name: "description", content: "No time this week? Support local UK charities with a donation through GiveBack." },
-      { property: "og:title", content: "Donate — GiveBack" },
+      { property: "og:title", content: "Donate | GiveBack" },
       { property: "og:description", content: "Support local UK charities with a donation." },
     ],
   }),
@@ -70,7 +70,7 @@ function DonatePage() {
             <input type="checkbox" checked={tip} onChange={(e) => setTip(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[var(--primary)]" />
             <span>
               <span className="font-medium text-foreground">Add a little for GiveBack to keep the service rolling</span>
-              <span className="block text-muted-foreground">Optional — GiveBack is free to use.</span>
+              <span className="block text-muted-foreground">Optional | GiveBack is free to use.</span>
             </span>
           </label>
           {tip && (
@@ -94,13 +94,13 @@ function DonatePage() {
             const { error } = await supabase.from("donations").insert({ charity_id: charity, user_id: user?.id ?? null, amount_pence: Math.round(amount * 100), giveback_pence: tip ? Math.round(tipAmount * 100) : 0, monthly });
             setBusy(false);
             if (error) return void toast.error(error.message);
-            toast("Thank you — your pledge is saved", { description: "Secure card payments are being set up; we'll let the charity know." });
+            toast("Thank you. Your pledge is saved", { description: "Secure card payments are being set up; we'll let the charity know." });
           }}
           className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 font-medium text-primary-foreground hover:opacity-90"
         >
           <Lock className="h-4 w-4" /> Donate £{amount}{tip ? ` + £${tipAmount} to GiveBack` : ""}{monthly ? "/month" : ""}
         </button>
-        <p className="text-center text-xs text-muted-foreground">Secure checkout powered by Stripe — coming soon.</p>
+        <p className="text-center text-xs text-muted-foreground">Secure checkout powered by Stripe. Coming soon.</p>
       </div>
     </div>
   );

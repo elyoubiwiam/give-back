@@ -13,9 +13,9 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/_authenticated/charity/tasks")({
   head: () => ({
     meta: [
-      { title: "Your tasks — GiveBack for charities" },
+      { title: "Your tasks | GiveBack for charities" },
       { name: "description", content: "Post volunteering tasks, set how many helpers you need and how long it takes." },
-      { property: "og:title", content: "Your tasks — GiveBack for charities" },
+      { property: "og:title", content: "Your tasks | GiveBack for charities" },
       { property: "og:description", content: "Post and manage volunteering tasks." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

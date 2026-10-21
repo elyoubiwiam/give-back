@@ -10,9 +10,9 @@ import { JoinCTA } from "@/components/JoinCTA";
 export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
-      { title: "Map of volunteering events — GiveBack" },
+      { title: "Map of volunteering events | GiveBack" },
       { name: "description", content: "See micro-volunteering tasks happening across UK cities on one map." },
-      { property: "og:title", content: "Map of volunteering events — GiveBack" },
+      { property: "og:title", content: "Map of volunteering events | GiveBack" },
       { property: "og:description", content: "Every task across the UK, on one map." },
     ],
   }),
