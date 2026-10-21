@@ -118,7 +118,7 @@ function AuthPage() {
       </div>
 
       <div className="rounded-3xl border border-border bg-card p-7 shadow-[var(--shadow-soft)]">
-        {search.as === "charity" && mode === "signin" && (
+        {isCharityView && mode === "signin" && (
           <p className="mb-4 rounded-2xl bg-teal/15 px-4 py-3 text-sm text-foreground">
             <span className="font-semibold">Charity partner sign-in.</span> Use the email and password GiveBack gave you to open your dashboard.
           </p>
@@ -126,7 +126,7 @@ function AuthPage() {
         {search.note && mode === "signup" && (
           <p className="mb-4 rounded-2xl bg-mustard/20 px-4 py-3 text-sm text-foreground">{search.note}</p>
         )}
-        {mode !== "forgot" && (
+        {mode !== "forgot" && !isCharityView && (
           <div className="mb-6 grid grid-cols-2 rounded-full bg-secondary p-1">
             {(["signup", "signin"] as const).map((m) => (
               <button key={m} onClick={() => setMode(m)} className={`rounded-full py-2 text-sm font-medium transition ${mode === m ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
@@ -150,7 +150,7 @@ function AuthPage() {
         {mode === "forgot" && (
           <button onClick={() => setMode("signin")} className="mt-3 text-sm text-muted-foreground underline underline-offset-4">Back to sign in</button>
         )}
-        {mode !== "forgot" && (
+        {mode !== "forgot" && !isCharityView && (
           <>
             <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />or<span className="h-px flex-1 bg-border" /></div>
             <button onClick={google} className="w-full rounded-full border border-border bg-background py-3 font-medium text-foreground transition hover:bg-secondary">
