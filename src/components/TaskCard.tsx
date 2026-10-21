@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { bookedCountsQuery } from "@/lib/queries";
 import { CalendarDays, CalendarPlus, Check, Clock, MapPin, Sparkles } from "lucide-react";
 import { downloadIcs, googleCalendarUrl, outlookCalendarUrl } from "@/lib/calendar";
 import { toast } from "sonner";
@@ -29,6 +30,7 @@ export function useJoinTask() {
     if (joined.size === 0) toast.success("You've unlocked 1 free reward 🎁", { description: "Your first action earns a welcome gift — choose a reward worth 150 points or less in Rewards." });
     await refresh();
     qc.invalidateQueries({ queryKey: ["city-stats"] });
+    qc.invalidateQueries({ queryKey: ["booked-counts"] });
     return true;
   };
 }
@@ -46,7 +48,11 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
   const meta = causeMeta(task.cause);
   const Icon = meta.icon;
   const isJoined = joined.has(task.id);
-  const spotsPct = Math.max(10, 100 - task.spots * 7);
+  const { data: counts } = useQuery(bookedCountsQuery);
+  const booked = counts?.get(task.id) ?? 0;
+  const spotsLeft = Math.max(0, task.spots - booked);
+  const full = spotsLeft === 0 && !isJoined;
+  const spotsPct = task.spots ? Math.max(6, Math.round((booked / task.spots) * 100)) : 100;
 
   return (
     <>
@@ -68,7 +74,10 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
           </span>
         </div>
         <h3 className="mt-4 text-lg font-semibold leading-snug text-foreground">{task.title}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{task.org}</p>
+        <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+          {task.charities?.logo_url && <img src={task.charities.logo_url} alt="" className="h-5 w-5 rounded-full object-cover" />}
+          {task.org}
+        </p>
         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
           <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatMinutes(task.minutes)}</span>
           <span className="flex items-center gap-1"><MapPin className="h-3.5 w-3.5" />{task.city}</span>
@@ -82,12 +91,12 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
             <div className="h-1.5 overflow-hidden rounded-full bg-muted">
               <div className="h-full rounded-full transition-all" style={{ width: `${spotsPct}%`, background: meta.color }} />
             </div>
-            <p className="mt-1.5 text-xs text-muted-foreground">{task.spots} spots left</p>
+            <p className="mt-1.5 text-xs text-muted-foreground">{spotsLeft} of {task.spots} spots left</p>
           </div>
         )}
         <div className="mt-auto pt-5">
           <Button
-            disabled={isJoined || joining}
+            disabled={isJoined || joining || full}
             onClick={async () => {
               setJoining(true);
               try {
@@ -102,7 +111,7 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
             }}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:scale-[1.02] hover:opacity-95 active:scale-95 disabled:bg-secondary disabled:text-secondary-foreground"
           >
-            {isJoined ? (<><Check className="h-4 w-4" /> Joined</>) : joining ? "Booking…" : "Lend a hand"}
+            {isJoined ? (<><Check className="h-4 w-4" /> Joined</>) : full ? "Fully booked" : joining ? "Booking…" : "Lend a hand"}
           </Button>
           {isJoined && <><CalendarLinks task={task} /><Button variant="ghost" className="mt-2 w-full text-muted-foreground" onClick={() => setCancelOpen(true)}>Cancel task</Button></>}
         </div>
@@ -140,6 +149,7 @@ export function TaskCard({ task, compact = false }: { task: Task; compact?: bool
               if (error) { toast.error(error.message); return; }
               await refresh();
               await qc.invalidateQueries({ queryKey: ["city-stats"] });
+              await qc.invalidateQueries({ queryKey: ["booked-counts"] });
               setCancelOpen(false);
               toast.success("Task cancelled");
             } finally { setCancelling(false); }
