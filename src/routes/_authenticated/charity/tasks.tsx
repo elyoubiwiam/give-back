@@ -145,7 +145,7 @@ function CharityTasks() {
           <p className={lbl}>How many volunteers do you need?</p>
           <div className="mt-1 flex items-center gap-2">
             <Button type="button" variant="outline" className="h-11 w-11 shrink-0 rounded-full p-0" onClick={() => setSpots(f.spots - 1)} aria-label="Fewer">-</Button>
-            <input type="number" min={1} max={500} aria-label="Volunteers needed" className={`${input} mt-0 w-24 text-center`} value={f.spots} onChange={(e) => setSpots(Number(e.target.value))} />
+            <input type="number" min={1} max={500} aria-label="Volunteers needed" className="block w-24 shrink-0 rounded-2xl border border-border bg-background px-3 py-2.5 text-center text-base text-foreground outline-none focus:border-primary" value={f.spots} onChange={(e) => setSpots(Number(e.target.value))} />
             <Button type="button" variant="outline" className="h-11 w-11 shrink-0 rounded-full p-0" onClick={() => setSpots(f.spots + 1)} aria-label="More">+</Button>
           </div>
           <p className="mt-1 text-xs text-muted-foreground">Volunteers see how many spots are left. It updates as people book or cancel.</p>
